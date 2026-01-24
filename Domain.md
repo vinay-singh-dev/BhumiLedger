@@ -1,33 +1,35 @@
 1.Purpose:
-the problem of land records being kept only in govt websites and those records are managed by local authority so its easy to manipulate those records its a problem now its solved by BhumiLedger because in BhumiLedger verfication by (Gram panchayat / sabha) are kept anyone can see the records of land.
-It does not solve the corruption and bribes taken in land selling and it does not replaces govt sites of land records.
-it protects land records of rightful owner and keeps the tabs of previous owners or buyers with (gram panchayat / gram sabha) verfication on every buying and selling.
+the problem of land records being kept only in govt websites and those records are managed by local authority no one can see all these records like transaction of land with mutual concent , date of transaction, witnessess,RegistryDocument etc in BhumiLedger we can see all these records its publically available. 
+
+BhumiLedger exists so the documents are publically available and the documents cannot be edited or removed once entered.
+
+this reduces risks of documents forging , fake claims etc.
 
 2. Core Principles (invariants)
-(Append-only history) it means that past records of land buyers and sellers are kept and they cannot be  removed only new buyers and sellers can se added.
+(Append-only history) it means that past records of land owners are kept and they cannot be removed only new owners can be  added.
 (Verified records immutable) records cannot me modified or edited only new records can be kept and people can see records.
 
 3.Actors
 
 Community member = community members can only see records if they are intrested they can buy or sell their land also.
 
-(Gram Sabha / Panchayat) = these authorities cannot edit land records or external documents they can only verify or unverify that land belongs to that person or not and is the land good to sell by seller and that land does not have any disputes loans,emi,previous ownership claim cases etc.
+(Gram Sabha / Panchayat) = these authorities they can  verify or unverify that land belongs to that person or not and is the land good to sell by seller and that land does not have any disputes loans,emi,previous ownership claim cases etc.
 
-(State authority) now state authorities are future concept also state authorities cannot edit or change anything in BhumiLedger they can just verify and it will add a verification badge that this land is verified.
+(State authority) now state authorities they can just verify that this land is verified.
 
 Auditor
 For each: allowed + forbidden actions
-(gram sabha / panchayat) this authority can add a verification badge if the land is not any dispute and that badge will say that this land is good to buy.
+(gram sabha / panchayat) this authority can add a verification  if the land is not any dispute and that badge will say that this land is good to buy.
 but this authority cannot edit land records or identities.
 
-(state authority) = this is future concepts but i was thinking that this will also add a verfication badge layer that will serve the same purpose as (gram panchayat / gram sabha ).
-this authority cannot edit or change land records 
+(state authority) = now state authorities they can just verify that this land is verified.
+this authority cannot edit or change land records. 
 
 4.Core Domain Concepts
 
-LandParcel 
+LandParcel = this is a khasra number alloted to every land by govt and its not changed never.
 
-OwnershipClaim = any rightful owner can submit his claim with documents that contains previous owner, when bought, amount of transaction, bank records, etc.
+OwnershipClaim = any claiment  can submit his claim with documents that contains previous owner, when bought, amount of transaction, bank records, etc.
 
 ConsentRecord = concent record of the owner and seller with their documents for verification of rightful owner.
 
