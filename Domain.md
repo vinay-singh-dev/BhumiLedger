@@ -1,20 +1,20 @@
 1.Purpose:
-the problem is land records being kept only in govt websites and those records are managed by local authority no one can see all these records in BhumiLedger we can see all these records are publically available. 
+the problem is land records being kept private.
 
-BhumiLedger exists so the documents are publically available and the documents cannot be edited or removed once entered.
+BhumiLedger exists so the documents cannot be edited or removed once entered.
 
 this reduces risks of documents forging , fake claims etc.
 
 2. Core Principles (invariants)
 (Append-only history) it means that past records of land owners are kept and they cannot be removed only new owners can be  added.
-(Verified records immutable) records cannot me modified or edited only new records can be kept and people can see records.
+(Verified records immutable) records cannot me modified or edited only new records can be kept.
 
 3.Actors
 
-Community member = community members can only see records and apply to be a claiment for a land when they have proper documents.
+Community member = community members can only see records and become claiment for a land when they have proper documents.
 community members cannot verify claim.
 community memebrs cannot transfer ownership alone they need authorities.
-community members cannot delete or edit history they can only apply its up to authorities.
+community members cannot delete or edit history its up to authorities.
 
 (Gram Sabha / Panchayat) = these authorities they can verify a claim of a claiment with proper documents.
 these are authorities they cannot create a claim.
@@ -29,7 +29,7 @@ these authorities cannot delet or edit history.
 
 Auditor
 For each: allowed + forbidden actions
-(gram sabha / panchayat) this authority can add a verification  if the land is not any dispute and that badge will say that this land is good to buy.
+(gram sabha / panchayat) this authority can add a verification if the land is not any dispute and that proves land is good to buy.
 but this authority cannot edit land records or identities.
 
 (state authority) = now state authorities they can just verify that this land is verified.
@@ -37,7 +37,7 @@ this authority cannot edit or change land records.
 
 4.Core Domain Concepts
 
-LandParcel = this is a unique land  number alloted to every land by govt and its not changed never.
+LandParcel = this is a unique land and is alloted to every land its a reference to identify a land.
 
 OwnershipClaim = any claiment  can submit his claim with documents that contains previous owner, when bought, amount of transaction, bank records, etc.
 
@@ -52,9 +52,9 @@ these documents alone does not guarantee that person is owner but it supports in
 
 5.Domain Actions
 
-Submit claim any claiment can submit his claim with documents that contains previous owner, when bought, amount of transaction, bank records, etc.
+Submit claim = any claiment can submit his claim with documents
 
-who is allowed to initiate process of rightful owner = its decided by matching previous owner and this owner bank statements of transaction money of land , date and time when its bought name of previous owner and current owner also some other authorities like gram panchayat / sabha etc.
+who is allowed to initiate process of claiment = its decided by verification of proper documents and authorities.
 
 (Verify / reject) gram panchat / sabha can reject or verify the claim based on documents both from seller and buyer.
 
@@ -71,9 +71,9 @@ preconditions consistes of proper documents proper authorities support for a cla
 
 Step-by-step, plain English
 seller wants to sell
-seller adds the land documents and submit to verification by gram panchayat  / sabha for selling land.
-gram panchayat / sabha can verify if the selling claim is real with cross verification with documents after verification the land is for selling
-buyer show their intrest in land buying.
+seller adds the land documents and submit to verification by gram panchayat  / sabha.
+gram panchayat / sabha can verify if the claim is real with cross verification with documents.
+buyer show their intrest.
 buyer and  seller initiate with mutual concent. 
 again gram panchayat / sabha verifies if the documents are correct and tranfer happens with mutual concent.
 
@@ -83,9 +83,11 @@ Used for hash to store land record.
 
 What is written on chain? =  Every document is written as hash number on chain if anyone tries to change or edit document then hash changes from previous to new and new hash is added but previous hash will not be deleted.
 
-When is it written? = when new documents and new ownership is approved by authorities and both sides of buyer and seller then its stored in hash and that cannot be edited removed in any case because if later conflicat arises which is highly impossible there will be no way anyone can delete those documents change names etc.
+When is it written? = when new documents and new ownership is approved by authorities and both sides of buyer and seller then its stored in hash and that cannot be edited removed because if later conflicat arises nobody can delete those documents change names etc.
 
-What guarantee does that give? = No false ownership will be there is these things are implemented because once there is no way to edit documents once they are uploaded and a hash is formed there is no way anyone can forge documents and get away with it.
+What guarantee does that give? = this guarantees that ownership will be protected by blockchain and every change will be recorded any editing in documents will be records and saved.
+
+nobody can forge documents and get away with it.
 
 documents cannot be uploaded directly on blockchain but hash can so we store hash on blockchain if document changes hash changes and new hash added but old one is still stored nothing can be edited and deleted.
 
