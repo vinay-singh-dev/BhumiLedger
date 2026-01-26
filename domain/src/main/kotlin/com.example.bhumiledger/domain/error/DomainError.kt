@@ -1,4 +1,4 @@
-package domain.error
+package com.example.bhumiledger.domain.error
 
 sealed class DomainError {
     object DuplicatePendingClaim : DomainError()

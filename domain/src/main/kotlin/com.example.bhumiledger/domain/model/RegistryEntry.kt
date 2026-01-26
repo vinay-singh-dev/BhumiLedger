@@ -1,4 +1,4 @@
-package domain.model
+package com.example.bhumiledger.domain.model
 
 data class RegistryEntry(
     val parcelId: String,

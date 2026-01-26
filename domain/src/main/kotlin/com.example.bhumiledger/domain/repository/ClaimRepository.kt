@@ -1,6 +1,6 @@
-package domain.repository
+package com.example.bhumiledger.domain.repository
 
-import domain.model.OwnershipClaim
+import com.example.bhumiledger.domain.model.OwnershipClaim
 
 interface ClaimRepository {
     fun getPendingClaimForParcel(parcelId: String): OwnershipClaim?

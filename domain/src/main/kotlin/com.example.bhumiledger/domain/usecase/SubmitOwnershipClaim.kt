@@ -1,10 +1,10 @@
-package domain.usecase
+package com.example.bhumiledger.domain.usecase
 
-import domain.model.ClaimStatus
-import domain.model.OwnershipClaim
-import domain.error.DomainError
-import domain.repository.ClaimRepository
-import domain.result.DomainResult
+import com.example.bhumiledger.domain.model.ClaimStatus
+import com.example.bhumiledger.domain.model.OwnershipClaim
+import com.example.bhumiledger.domain.error.DomainError
+import com.example.bhumiledger.domain.repository.ClaimRepository
+import com.example.bhumiledger.domain.result.DomainResult
 import java.util.UUID
 
 
