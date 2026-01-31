@@ -41,7 +41,7 @@ LandParcel = A uniquely identifiable unit of land within the system, independent
 
 OwnershipClaim = An assertion of rights over a LandParcel, pending verification.
 
-ConsentRecord = concent record of the owner and seller with their documents for verification of rightful owner.
+ConsentRecord = consent record of the owner and seller with their documents for verification of rightful owner.
 
 RegistryEntry = if the land ownership transfers from one person to another RegistryEntry is a document that keeps track of who is buying and who is selling.
 Meaning only. No fields.
