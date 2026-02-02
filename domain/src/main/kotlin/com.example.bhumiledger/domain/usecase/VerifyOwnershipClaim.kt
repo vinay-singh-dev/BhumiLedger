@@ -12,7 +12,6 @@ class VerifyOwnershipClaim(
 
     operator fun invoke(
         claimId: String,
-        string: String
     ): DomainResult<OwnershipClaim> {
         val claim = claimRepository.getClaimById(claimId)
             ?: return DomainResult.Failure(DomainError.ClaimNotFound)
