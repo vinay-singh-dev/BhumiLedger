@@ -1,6 +1,13 @@
 package com.example.bhumiledger.domain.repository
 
-// starting registry repo
+import com.example.bhumiledger.domain.model.RegistryEntry
 
-class RegistryRepository {
+
+
+interface RegistryRepository {
+    fun save(entry: RegistryEntry)
+    fun getByParcelId(parcelId: String): RegistryEntry?
 }
+
+
+
