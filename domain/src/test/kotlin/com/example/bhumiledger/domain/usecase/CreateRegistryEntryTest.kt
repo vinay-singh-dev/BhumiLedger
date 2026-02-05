@@ -1,5 +1,6 @@
 package com.example.bhumiledger.domain.usecase
 
+import com.example.bhumiledger.domain.error.DomainError
 import com.example.bhumiledger.domain.model.ClaimStatus
 import com.example.bhumiledger.domain.model.OwnershipClaim
 import com.example.bhumiledger.domain.model.RegistryEntry
@@ -41,5 +42,33 @@ class CreateRegistryEntryTest {
         val entry = (result as DomainResult.Success).data
         assertTrue(entry.parcelId == "parcel-2")
         assertTrue(entry.ownerId == "user-1")
+    }
+
+    @Test
+    fun `creating registry entry when ownership already exists returns failure` () {
+        val repo = FakeRegistryRepository()
+        val useCase = CreateRegistryEntry(repo)
+
+        val verifiedClaim = OwnershipClaim(
+            id = "claim-1",
+            parcelId = "parcel-p1",
+            claimantId = "user-1",
+            status = ClaimStatus.VERIFIED
+        )
+        val existingEntry = RegistryEntry(
+            parcelId = "parcel-p1",
+            ownerId = "user-1",
+            createdAt = System.currentTimeMillis()
+        )
+        repo.save(existingEntry)
+
+        val result = useCase(verifiedClaim)
+
+        assertTrue(result is DomainResult.Failure)
+       assertTrue(result.error == DomainError.OwnershipAlreadyExists)
+
+
+
+
     }
 }

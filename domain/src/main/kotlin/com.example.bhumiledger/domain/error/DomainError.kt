@@ -4,6 +4,7 @@ sealed class DomainError {
     object DuplicatePendingClaim : DomainError()
     object ClaimNotFound : DomainError()
     object InvalidClaimState : DomainError()
+    object OwnershipAlreadyExists : DomainError()
 
 
 }

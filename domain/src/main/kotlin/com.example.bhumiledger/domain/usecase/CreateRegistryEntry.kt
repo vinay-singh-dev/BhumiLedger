@@ -12,9 +12,13 @@ class CreateRegistryEntry(
 ) {
     operator fun invoke(claim: OwnershipClaim): DomainResult<RegistryEntry> {
 
+
         if (claim.status != ClaimStatus.VERIFIED) {
             return DomainResult.Failure(DomainError.InvalidClaimState)
         }
+
+        if(registryRepository.getByParcelId(claim.parcelId) != null)
+            return DomainResult.Failure(DomainError.OwnershipAlreadyExists)
 
         val entry = RegistryEntry(
             parcelId = claim.parcelId,
