@@ -6,6 +6,7 @@ import com.example.bhumiledger.domain.model.OwnershipClaim
 import com.example.bhumiledger.domain.model.RegistryEntry
 import com.example.bhumiledger.domain.repository.RegistryRepository
 import com.example.bhumiledger.domain.result.DomainResult
+import kotlin.random.Random
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
@@ -18,6 +19,10 @@ internal class FakeRegistryRepository : RegistryRepository {
 
     override fun getByParcelId(parcelId: String): RegistryEntry? {
         return registry.find { it.parcelId == parcelId }
+    }
+
+    override fun getHistoryForParcel(parcelId: String): List<RegistryEntry> {
+        return registry.filter{ it.parcelId == parcelId  }
     }
 }
 
