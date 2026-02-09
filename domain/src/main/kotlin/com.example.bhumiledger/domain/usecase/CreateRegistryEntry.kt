@@ -26,9 +26,11 @@ class CreateRegistryEntry(
             createdAt = System.currentTimeMillis()
         )
 
+
         registryRepository.save(entry)
 
         return DomainResult.Success(entry)
+
     }
 }
 

@@ -70,7 +70,10 @@ class CreateRegistryEntryTest {
         val result = useCase(verifiedClaim)
 
         assertTrue(result is DomainResult.Failure)
-       assertTrue(result.error == DomainError.OwnershipAlreadyExists)
+
+        val failure = result as DomainResult.Failure
+        assertTrue(failure.error == DomainError.OwnershipAlreadyExists)
+
 
 
 
