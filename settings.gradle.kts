@@ -26,3 +26,4 @@ include(":app")
 include(":app", ":domain")
 
 include(":domain")
+include(":data")
