@@ -1,6 +1,8 @@
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.android)
 
 
 }
@@ -37,7 +39,11 @@ android {
     buildFeatures {
         compose = true
     }
-}
+    kotlin {
+        compilerOptions {
+            jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11
+        }
+    }
 
 dependencies {
     implementation(libs.androidx.core.ktx)
@@ -59,3 +65,4 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
 }
+    }

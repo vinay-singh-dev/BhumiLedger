@@ -1,5 +1,6 @@
 package com.example.bhumiledger
 
+import BhumiLedgerContainer
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -11,14 +12,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.bhumiledger.data.BhumiLedgerContainer
 import com.example.bhumiledger.theme.BhumiLedgerTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val container = BhumiLedgerContainer()
+        val container = BhumiLedgerContainer(applicationContext)
         val viewModel = MainViewModel(container)
         viewModel.testOwnershipFlow()
 
@@ -52,4 +52,6 @@ fun GreetingPreview() {
     BhumiLedgerTheme {
         Greeting("Android")
     }
+
+
 }

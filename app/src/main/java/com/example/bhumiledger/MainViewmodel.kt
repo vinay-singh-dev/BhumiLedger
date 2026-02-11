@@ -1,8 +1,8 @@
 package com.example.bhumiledger
 
+import BhumiLedgerContainer
 import android.util.Log
 import androidx.lifecycle.ViewModel
-import com.example.bhumiledger.data.BhumiLedgerContainer
 import com.example.bhumiledger.domain.model.OwnershipClaim
 import com.example.bhumiledger.domain.model.RegistryEntry
 import com.example.bhumiledger.domain.result.DomainResult
