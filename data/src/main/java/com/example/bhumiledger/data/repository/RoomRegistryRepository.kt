@@ -1,5 +1,6 @@
 package com.example.bhumiledger.data.repository
 
+import android.util.Log
 import com.example.bhumiledger.data.local.room.RegistryDao
 import com.example.bhumiledger.data.local.room.toDomain
 import com.example.bhumiledger.data.local.room.toEntity
@@ -12,21 +13,41 @@ class RoomRegistryRepository(
 ) : RegistryRepository {
 
     override fun save(entry: RegistryEntry) {
+
+        Log.d("ROOM_TEST", "saveRegistryEntry called: $entry")
+
         runBlocking {
             dao.insert(entry.toEntity())
         }
+
+        Log.d("ROOM_TEST", "saveRegistryEntry SUCCESS")
     }
 
     override fun getByParcelId(parcelId: String): RegistryEntry? {
+
+        Log.d("ROOM_TEST", "getByParcelId called: $parcelId")
+
         return runBlocking {
-            dao.getLatestForParcel(parcelId)?.toDomain()
+
+            val entity = dao.getLatestForParcel(parcelId)
+
+            Log.d("ROOM_TEST", "getByParcelId result: $entity")
+
+            entity?.toDomain()
         }
     }
 
     override fun getHistoryForParcel(parcelId: String): List<RegistryEntry> {
+
+        Log.d("ROOM_TEST", "getHistoryForParcel called: $parcelId")
+
         return runBlocking {
-            dao.getHistoryForParcel(parcelId)
-                .map { it.toDomain() }
+
+            val entities = dao.getHistoryForParcel(parcelId)
+
+            Log.d("ROOM_TEST", "getHistoryForParcel result count: ${entities.size}")
+
+            entities.map { it.toDomain() }
         }
     }
 }

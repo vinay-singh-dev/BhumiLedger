@@ -1,5 +1,6 @@
 package com.example.bhumiledger.data.repository
 
+import android.util.Log
 import com.example.bhumiledger.data.local.room.ClaimDao
 import com.example.bhumiledger.data.local.room.ClaimEntity
 import com.example.bhumiledger.domain.model.ClaimStatus
@@ -13,6 +14,8 @@ class RoomClaimRepository(
 
     override fun saveClaim(claim: OwnershipClaim) {
 
+        Log.d("ROOM_TEST", "saveClaim called with: $claim")
+
         val entity = ClaimEntity(
             claimId = claim.id,
             parcelId = claim.parcelId,
@@ -24,14 +27,21 @@ class RoomClaimRepository(
         runBlocking {
             dao.insert(entity)
         }
+
+        Log.d("ROOM_TEST", "saveClaim SUCCESS")
     }
 
     override fun getClaimById(claimId: String): OwnershipClaim? {
 
+        Log.d("ROOM_TEST", "getClaimById called: $claimId")
+
         return runBlocking {
 
-            dao.getById(claimId)?.let {
+            val entity = dao.getById(claimId)
 
+            Log.d("ROOM_TEST", "getClaimById result: $entity")
+
+            entity?.let {
                 OwnershipClaim(
                     id = it.claimId,
                     parcelId = it.parcelId,
@@ -44,10 +54,15 @@ class RoomClaimRepository(
 
     override fun getPendingClaimForParcel(parcelId: String): OwnershipClaim? {
 
+        Log.d("ROOM_TEST", "getPendingClaimForParcel called: $parcelId")
+
         return runBlocking {
 
-            dao.getPendingClaim(parcelId)?.let {
+            val entity = dao.getPendingClaim(parcelId)
 
+            Log.d("ROOM_TEST", "getPendingClaimForParcel result: $entity")
+
+            entity?.let {
                 OwnershipClaim(
                     id = it.claimId,
                     parcelId = it.parcelId,
@@ -60,16 +75,21 @@ class RoomClaimRepository(
 
     override fun updateClaim(claim: OwnershipClaim) {
 
-        val entity = ClaimEntity(
-            claimId = claim.id,
-            parcelId = claim.parcelId,
-            claimantId = claim.claimantId,
-            status = claim.status.name,
-            createdAt = System.currentTimeMillis()
-        )
-
         runBlocking {
-            dao.update(entity)
+
+            val existing = dao.getEntityByClaimId(claim.id)
+                ?: run {
+                    Log.e("ROOM_TEST", "Update failed. Claim not found: ${claim.id}")
+                    return@runBlocking
+                }
+
+            val updated = existing.copy(
+                status = claim.status.name
+            )
+
+            dao.update(updated)
+
+            Log.d("ROOM_TEST", "Claim updated successfully: ${claim.id}")
         }
     }
 }

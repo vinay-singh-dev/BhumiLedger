@@ -28,8 +28,11 @@ class MainViewModel(
     }
 
     fun testOwnershipFlow() {
-        val parcelId = "parcel-26112006"
-        val claimantId = "Aneesh"
+
+        Log.d("ROOM_TEST", "===== FULL FLOW TEST START =====")
+
+        val parcelId = "parcel-test-001"
+        val claimantId = "Vinay"
 
         val submitResult = container.submitOwnershipClaim(parcelId, claimantId)
 
@@ -37,26 +40,36 @@ class MainViewModel(
 
             val claim = submitResult.data
 
+            Log.d("ROOM_TEST", "Claim created: ${claim.id}")
+
             val verifyResult = container.verifyOwnershipClaim(claim.id)
 
             if (verifyResult is DomainResult.Success) {
+
                 val verifiedClaim = verifyResult.data
 
+                Log.d("ROOM_TEST", "Claim verified: ${verifiedClaim.id}")
+
                 val registryResult = container.createRegistryEntry(verifiedClaim)
+
                 if (registryResult is DomainResult.Success) {
 
-                    val historyResult = container.getOwnershipHistory(parcelId)
+                    Log.d("ROOM_TEST", "Registry entry created")
+
+                    val historyResult =
+                        container.getOwnershipHistory(parcelId)
+
                     if (historyResult is DomainResult.Success) {
-                        val history = historyResult.data
 
-                        Log.d("BhumiLedger", "Ownership history size: ${history.size}")
-                        Log.d("BhumiLedger", "Current Owner: ${history.last().ownerId}")
+                        Log.d(
+                            "ROOM_TEST",
+                            "Registry history size: ${historyResult.data.size}"
+                        )
 
+                        Log.d("ROOM_TEST", "===== FULL FLOW TEST END =====")
                     }
                 }
-
             }
         }
-
     }
 }
