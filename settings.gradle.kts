@@ -21,6 +21,10 @@ dependencyResolutionManagement {
 
 
 
+
+
+
+
 rootProject.name = "BhumiLedger"
 include(":app")
 
