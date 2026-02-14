@@ -1,4 +1,4 @@
-package com.example.bhumiledger
+package com.example.bhumiledger.ui
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
@@ -7,9 +7,10 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.example.bhumiledger.MainViewModel
 
 @Composable
-fun ClaimScreen(viewModel: MainViewModel) {
+fun CitizenClaimScreen(viewModel: MainViewModel) {
 
     var parcelId by remember { mutableStateOf("") }
     var claimantId by remember { mutableStateOf("") }
@@ -18,6 +19,8 @@ fun ClaimScreen(viewModel: MainViewModel) {
         modifier = Modifier.padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
+
+        Text("Citizen Panel")
 
         TextField(
             value = parcelId,
@@ -37,14 +40,6 @@ fun ClaimScreen(viewModel: MainViewModel) {
             }
         ) {
             Text("Submit Claim")
-        }
-
-        Button(
-            onClick = {
-                viewModel.verifyClaim()
-            }
-        ) {
-            Text("Verify Claim")
         }
 
         Button(

@@ -6,15 +6,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import com.example.bhumiledger.domain.model.UserRole
 import com.example.bhumiledger.domain.model.OwnershipClaim
-import com.example.bhumiledger.domain.model.RegistryEntry
 import com.example.bhumiledger.domain.result.DomainResult
 
 class MainViewModel(
     private val container: BhumiLedgerContainer
 ) : ViewModel() {
 
-    // UI observable state
     var status by mutableStateOf("Idle")
         private set
 
@@ -25,14 +24,18 @@ class MainViewModel(
         private set
 
 
-    // UI will call this
+    // CITIZEN ACTION
     fun submitClaim(parcelId: String, claimantId: String) {
 
-        Log.d("ROOM_TEST", "UI submitClaim called")
+        Log.d("ROOM_TEST", "Citizen submitting claim")
 
-        val result = container.submitOwnershipClaim(parcelId, claimantId)
+        val result =
+            container.submitOwnershipClaim(
+                parcelId,
+                claimantId
+            )
 
-        when (result) {
+        when(result) {
 
             is DomainResult.Success -> {
 
@@ -40,14 +43,15 @@ class MainViewModel(
 
                 lastClaimId = claim.id
 
-                status = "Claim Created: ${claim.id}"
+                status =
+                    "Claim Submitted: ${claim.id}"
 
                 Log.d("ROOM_TEST", status)
             }
 
             is DomainResult.Failure -> {
 
-                status = "Claim Failed"
+                status = result.error.toString()
 
                 Log.e("ROOM_TEST", status)
             }
@@ -55,27 +59,64 @@ class MainViewModel(
     }
 
 
-    fun verifyClaim() {
+    // AUTHORITY ACTION
+    fun verifyClaim(claimId: String) {
 
-        if (lastClaimId.isEmpty()) {
-            status = "No claim to verify"
-            return
-        }
+        Log.d("ROOM_TEST", "Authority verifying claim")
 
-        val result = container.verifyOwnershipClaim(lastClaimId)
+        val result =
+            container.verifyOwnershipClaim(
+                claimId,
+                UserRole.AUTHORITY
+            )
 
-        when (result) {
+        when(result) {
 
             is DomainResult.Success -> {
 
-                status = "Claim Verified"
+                status = "Claim VERIFIED"
 
                 Log.d("ROOM_TEST", status)
             }
 
             is DomainResult.Failure -> {
 
-                status = "Verification Failed"
+                status = result.error.toString()
+
+                Log.e("ROOM_TEST", status)
+            }
+        }
+    }
+
+
+    private fun createRegistryEntry(
+        claim: OwnershipClaim
+    ) {
+
+        Log.d(
+            "ROOM_TEST",
+            "Creating registry entry"
+        )
+
+        val registryResult =
+            container.createRegistryEntry(
+                claim
+            )
+
+        when(registryResult) {
+
+            is DomainResult.Success -> {
+
+                status =
+                    "Ownership TRANSFERRED"
+
+                Log.d("ROOM_TEST", status)
+            }
+
+            is DomainResult.Failure -> {
+
+                status =
+                    registryResult.error.toString()
 
                 Log.e("ROOM_TEST", status)
             }
@@ -85,62 +126,32 @@ class MainViewModel(
 
     fun loadHistory(parcelId: String) {
 
-        val result = container.getOwnershipHistory(parcelId)
+        Log.d("ROOM_TEST", "Loading history")
 
-        if (result is DomainResult.Success) {
+        val result =
+            container.getOwnershipHistory(
+                parcelId
+            )
 
-            historySize = result.data.size
+        when(result) {
 
-            status = "History loaded: $historySize entries"
+            is DomainResult.Success -> {
 
-            Log.d("ROOM_TEST", status)
-        }
-    }
+                historySize =
+                    result.data.size
 
+                status =
+                    "History entries: $historySize"
 
-    // KEEP this only for debug, not production
-    fun testOwnershipFlow() {
+                Log.d("ROOM_TEST", status)
+            }
 
-        Log.d("ROOM_TEST", "===== FULL FLOW TEST START =====")
+            is DomainResult.Failure -> {
 
-        val parcelId = "parcel-test-001"
-        val claimantId = "Vinay"
+                status =
+                    result.error.toString()
 
-        val submitResult = container.submitOwnershipClaim(parcelId, claimantId)
-
-        if (submitResult is DomainResult.Success) {
-
-            val claim = submitResult.data
-
-            Log.d("ROOM_TEST", "Claim created: ${claim.id}")
-
-            val verifyResult = container.verifyOwnershipClaim(claim.id)
-
-            if (verifyResult is DomainResult.Success) {
-
-                val verifiedClaim = verifyResult.data
-
-                Log.d("ROOM_TEST", "Claim verified: ${verifiedClaim.id}")
-
-                val registryResult = container.createRegistryEntry(verifiedClaim)
-
-                if (registryResult is DomainResult.Success) {
-
-                    Log.d("ROOM_TEST", "Registry entry created")
-
-                    val historyResult =
-                        container.getOwnershipHistory(parcelId)
-
-                    if (historyResult is DomainResult.Success) {
-
-                        Log.d(
-                            "ROOM_TEST",
-                            "Registry history size: ${historyResult.data.size}"
-                        )
-
-                        Log.d("ROOM_TEST", "===== FULL FLOW TEST END =====")
-                    }
-                }
+                Log.e("ROOM_TEST", status)
             }
         }
     }

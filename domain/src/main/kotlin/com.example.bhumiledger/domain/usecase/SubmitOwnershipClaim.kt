@@ -4,21 +4,38 @@ import com.example.bhumiledger.domain.model.ClaimStatus
 import com.example.bhumiledger.domain.model.OwnershipClaim
 import com.example.bhumiledger.domain.error.DomainError
 import com.example.bhumiledger.domain.repository.ClaimRepository
+import com.example.bhumiledger.domain.repository.RegistryRepository
 import com.example.bhumiledger.domain.result.DomainResult
 import java.util.UUID
 
-
 class SubmitOwnershipClaim(
-    private val claimRepository: ClaimRepository
+    private val claimRepository: ClaimRepository,
+    private val registryRepository: RegistryRepository
 ) {
+
     operator fun invoke(
         parcelId: String,
         claimantId: String
     ): DomainResult<OwnershipClaim> {
 
-        val existing = claimRepository.getPendingClaimForParcel(parcelId)
-        if (existing != null) {
-            return DomainResult.Failure(DomainError.DuplicatePendingClaim)
+        // CRITICAL: prevent claim if parcel already owned
+        val existingOwner =
+            registryRepository.getByParcelId(parcelId)
+
+        if (existingOwner != null) {
+            return DomainResult.Failure(
+                DomainError.OwnershipAlreadyExists
+            )
+        }
+
+        // prevent duplicate pending claim
+        val existingPending =
+            claimRepository.getPendingClaimForParcel(parcelId)
+
+        if (existingPending != null) {
+            return DomainResult.Failure(
+                DomainError.DuplicatePendingClaim
+            )
         }
 
         val claim = OwnershipClaim(
@@ -29,6 +46,7 @@ class SubmitOwnershipClaim(
         )
 
         claimRepository.saveClaim(claim)
+
         return DomainResult.Success(claim)
     }
 }
