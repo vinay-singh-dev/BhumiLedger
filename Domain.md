@@ -103,3 +103,4 @@ What is recorded? = Everything current owner, previous owner, transaction record
 What cannot be erased? = Any ownership and documets cannot be edited or erased because all of this is stored in hash if anything changes hash changes it provides tamper-evident history of those documents.
 
 
+
