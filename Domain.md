@@ -101,3 +101,5 @@ documents cannot be uploaded directly on blockchain but hash can so we store has
 What is recorded? = Everything current owner, previous owner, transaction record of the land ownership transfer , Registry papers, name of owners from start to end , date , which court and which lawyer make those documents and who was present as witness of transactions their names.
 
 What cannot be erased? = Any ownership and documets cannot be edited or erased because all of this is stored in hash if anything changes hash changes it provides tamper-evident history of those documents.
+
+
