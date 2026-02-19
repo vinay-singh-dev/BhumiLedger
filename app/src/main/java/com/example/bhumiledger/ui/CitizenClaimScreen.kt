@@ -1,59 +1,96 @@
 package com.example.bhumiledger.ui
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ExitToApp
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.bhumiledger.MainViewModel
+import com.example.bhumiledger.auth.AuthViewModel
 
 @Composable
-fun CitizenClaimScreen(viewModel: MainViewModel) {
+fun CitizenClaimScreen(
+    mainViewModel: MainViewModel,
+    navController: NavController,
+    authViewModel: AuthViewModel
+) {
 
     var parcelId by remember { mutableStateOf("") }
-    var claimantId by remember { mutableStateOf("") }
 
-    Column(
-        modifier = Modifier.padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+    Box(
+        modifier = Modifier.fillMaxSize()
     ) {
 
-        Text("Citizen Panel")
-
-        TextField(
-            value = parcelId,
-            onValueChange = { parcelId = it },
-            label = { Text("Parcel ID") }
-        )
-
-        TextField(
-            value = claimantId,
-            onValueChange = { claimantId = it },
-            label = { Text("Claimant ID") }
-        )
-
-        Button(
-            onClick = {
-                viewModel.submitClaim(parcelId, claimantId)
-            }
+        // Logout Button (Top Right)
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(30.dp),
+            horizontalArrangement = Arrangement.End
         ) {
-            Text("Submit Claim")
+            ElevatedButton(
+                onClick = {
+                    println("LOGOUT CLICKED")
+
+                    authViewModel.logout()
+
+                    navController.navigate("login") {
+                        popUpTo(0) { inclusive = true }
+                    }
+
+
+
+
+                }
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ExitToApp,
+                    contentDescription = "Logout"
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text("Logout")
+            }
         }
 
-        Button(
-            onClick = {
-                viewModel.loadHistory(parcelId)
-            }
+        // Center Content
+        Column(
+            modifier = Modifier
+                .align(Alignment.Center)
+                .fillMaxWidth(0.85f),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Text("Load History")
+
+            Text(
+                text = "Citizen Panel",
+                style = MaterialTheme.typography.headlineMedium
+            )
+
+            OutlinedTextField(
+                value = parcelId,
+                onValueChange = { parcelId = it },
+                label = { Text("Parcel ID") },
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Button(
+                onClick = {
+                    val userId = authViewModel.getCurrentUserId()
+
+                    if (userId != null) {
+                        mainViewModel.submitClaim(parcelId, userId)
+                    }
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Submit Claim")
+            }
+
+            Text("Status: ${mainViewModel.status}")
         }
-
-        Text("Status: ${viewModel.status}")
-
-        Text("Last Claim ID: ${viewModel.lastClaimId}")
-
-        Text("History Size: ${viewModel.historySize}")
     }
 }

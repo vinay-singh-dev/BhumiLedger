@@ -40,9 +40,10 @@ dependencies {
     implementation(project(":domain"))
 
     // Room — ONLY version catalog, NO hardcoded versions
-    implementation(libs.androidx.room.runtime)
-    implementation(libs.androidx.room.ktx)
+    api(libs.androidx.room.runtime)
+    api(libs.androidx.room.ktx)
     ksp(libs.androidx.room.compiler)
+
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

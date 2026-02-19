@@ -1,6 +1,6 @@
 package com.example.bhumiledger
 
-import BhumiLedgerContainer
+import com.example.bhumiledger.BhumiLedgerContainer
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf

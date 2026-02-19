@@ -1,18 +1,41 @@
+package com.example.bhumiledger
+
 import android.content.Context
 import com.example.bhumiledger.data.local.room.DatabaseProvider
+import com.example.bhumiledger.data.repository.RoomAuthRepository
 import com.example.bhumiledger.data.repository.RoomClaimRepository
 import com.example.bhumiledger.data.repository.RoomRegistryRepository
 import com.example.bhumiledger.domain.model.OwnershipClaim
 import com.example.bhumiledger.domain.model.UserRole
 import com.example.bhumiledger.domain.usecase.CreateRegistryEntry
 import com.example.bhumiledger.domain.usecase.GetOwnershipHistory
+import com.example.bhumiledger.domain.usecase.LoginUserUseCase
+import com.example.bhumiledger.domain.usecase.RegisterUserUseCase
 import com.example.bhumiledger.domain.usecase.SubmitOwnershipClaim
 import com.example.bhumiledger.domain.usecase.VerifyOwnershipClaim
+import com.example.bhumiledger.session.SessionManager
 
 class BhumiLedgerContainer(context: Context) {
 
     private val db =
         DatabaseProvider.getDatabase(context)
+
+    private val userDao = db.userDao()
+
+    private val authRepository =
+        RoomAuthRepository(userDao)
+
+    val loginUserUseCase =
+        LoginUserUseCase(authRepository)
+
+    val registerUserUseCase =
+        RegisterUserUseCase(authRepository)
+
+    val sessionManager: SessionManager by lazy {
+        SessionManager(context)
+    }
+
+
 
     private val claimRepository =
         RoomClaimRepository(db.claimDao())
