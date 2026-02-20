@@ -3,6 +3,7 @@ package com.example.bhumiledger
 import android.content.Context
 import com.example.bhumiledger.data.local.room.DatabaseProvider
 import com.example.bhumiledger.data.repository.RoomAuthRepository
+import com.example.bhumiledger.data.repository.RoomBlockchainRepository
 import com.example.bhumiledger.data.repository.RoomClaimRepository
 import com.example.bhumiledger.data.repository.RoomRegistryRepository
 import com.example.bhumiledger.domain.model.OwnershipClaim
@@ -19,6 +20,11 @@ class BhumiLedgerContainer(context: Context) {
 
     private val db =
         DatabaseProvider.getDatabase(context)
+
+    private val blockDao = db.blockDao()
+
+    private val blockchainRepository =
+        RoomBlockchainRepository(blockDao)
 
     private val userDao = db.userDao()
 
@@ -56,7 +62,8 @@ class BhumiLedgerContainer(context: Context) {
     private val verifyOwnershipClaimUseCase =
         VerifyOwnershipClaim(
             claimRepository,
-            registryRepository
+            registryRepository,
+            blockchainRepository
         )
 
 
@@ -81,7 +88,7 @@ class BhumiLedgerContainer(context: Context) {
         )
 
 
-    fun verifyOwnershipClaim(
+    suspend fun verifyOwnershipClaim(
         claimId: String,
         role: UserRole
     ) =

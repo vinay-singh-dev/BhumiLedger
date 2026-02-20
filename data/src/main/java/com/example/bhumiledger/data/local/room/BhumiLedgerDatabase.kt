@@ -5,11 +5,12 @@ import androidx.room.RoomDatabase
 
 @Database(
     entities = [
-        RegistryEntryEntity::class,
         ClaimEntity::class,
-    UserEntity::class
+        RegistryEntryEntity::class,
+        UserEntity::class,
+        BlockEntity::class
     ],
-    version = 2,
+    version = 3,   // 👈 bump version
     exportSchema = false
 )
 abstract class BhumiLedgerDatabase : RoomDatabase() {
@@ -19,5 +20,7 @@ abstract class BhumiLedgerDatabase : RoomDatabase() {
     abstract fun claimDao(): ClaimDao
 
     abstract fun userDao(): UserDao
+
+    abstract fun blockDao(): BlockDao
 
 }

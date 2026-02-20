@@ -1,14 +1,15 @@
 package com.example.bhumiledger
 
-import com.example.bhumiledger.BhumiLedgerContainer
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.bhumiledger.domain.model.UserRole
 import com.example.bhumiledger.domain.model.OwnershipClaim
 import com.example.bhumiledger.domain.result.DomainResult
+import kotlinx.coroutines.launch
 
 class MainViewModel(
     private val container: BhumiLedgerContainer
@@ -24,134 +25,111 @@ class MainViewModel(
         private set
 
 
+    // ===============================
     // CITIZEN ACTION
+    // ===============================
     fun submitClaim(parcelId: String, claimantId: String) {
 
-        Log.d("ROOM_TEST", "Citizen submitting claim")
+        viewModelScope.launch {
 
-        val result =
-            container.submitOwnershipClaim(
-                parcelId,
-                claimantId
-            )
+            Log.d("ROOM_TEST", "Citizen submitting claim")
 
-        when(result) {
+            val result =
+                container.submitOwnershipClaim(
+                    parcelId,
+                    claimantId
+                )
 
-            is DomainResult.Success -> {
+            when (result) {
 
-                val claim = result.data
+                is DomainResult.Success -> {
 
-                lastClaimId = claim.id
+                    val claim = result.data
 
-                status =
-                    "Claim Submitted: ${claim.id}"
+                    lastClaimId = claim.id
 
-                Log.d("ROOM_TEST", status)
-            }
+                    status = "Claim Submitted: ${claim.id}"
 
-            is DomainResult.Failure -> {
+                    Log.d("ROOM_TEST", status)
+                }
 
-                status = result.error.toString()
+                is DomainResult.Failure -> {
 
-                Log.e("ROOM_TEST", status)
+                    status = result.error.toString()
+
+                    Log.e("ROOM_TEST", status)
+                }
             }
         }
     }
 
 
+    // ===============================
     // AUTHORITY ACTION
+    // ===============================
     fun verifyClaim(claimId: String) {
 
-        Log.d("ROOM_TEST", "Authority verifying claim")
+        viewModelScope.launch {
 
-        val result =
-            container.verifyOwnershipClaim(
-                claimId,
-                UserRole.AUTHORITY
-            )
+            Log.d("ROOM_TEST", "Authority verifying claim")
 
-        when(result) {
+            val result =
+                container.verifyOwnershipClaim(
+                    claimId,
+                    UserRole.AUTHORITY
+                )
 
-            is DomainResult.Success -> {
+            when (result) {
 
-                status = "Claim VERIFIED"
+                is DomainResult.Success -> {
 
-                Log.d("ROOM_TEST", status)
-            }
+                    status = "Claim VERIFIED"
 
-            is DomainResult.Failure -> {
+                    Log.d("ROOM_TEST", status)
+                }
 
-                status = result.error.toString()
+                is DomainResult.Failure -> {
 
-                Log.e("ROOM_TEST", status)
-            }
-        }
-    }
+                    status = result.error.toString()
 
-
-    private fun createRegistryEntry(
-        claim: OwnershipClaim
-    ) {
-
-        Log.d(
-            "ROOM_TEST",
-            "Creating registry entry"
-        )
-
-        val registryResult =
-            container.createRegistryEntry(
-                claim
-            )
-
-        when(registryResult) {
-
-            is DomainResult.Success -> {
-
-                status =
-                    "Ownership TRANSFERRED"
-
-                Log.d("ROOM_TEST", status)
-            }
-
-            is DomainResult.Failure -> {
-
-                status =
-                    registryResult.error.toString()
-
-                Log.e("ROOM_TEST", status)
+                    Log.e("ROOM_TEST", status)
+                }
             }
         }
     }
 
 
+    // ===============================
+    // LOAD HISTORY
+    // ===============================
     fun loadHistory(parcelId: String) {
 
-        Log.d("ROOM_TEST", "Loading history")
+        viewModelScope.launch {
 
-        val result =
-            container.getOwnershipHistory(
-                parcelId
-            )
+            Log.d("ROOM_TEST", "Loading history")
 
-        when(result) {
+            val result =
+                container.getOwnershipHistory(
+                    parcelId
+                )
 
-            is DomainResult.Success -> {
+            when (result) {
 
-                historySize =
-                    result.data.size
+                is DomainResult.Success -> {
 
-                status =
-                    "History entries: $historySize"
+                    historySize = result.data.size
 
-                Log.d("ROOM_TEST", status)
-            }
+                    status = "History entries: $historySize"
 
-            is DomainResult.Failure -> {
+                    Log.d("ROOM_TEST", status)
+                }
 
-                status =
-                    result.error.toString()
+                is DomainResult.Failure -> {
 
-                Log.e("ROOM_TEST", status)
+                    status = result.error.toString()
+
+                    Log.e("ROOM_TEST", status)
+                }
             }
         }
     }
