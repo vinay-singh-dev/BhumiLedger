@@ -12,12 +12,6 @@ class RoomAuthRepository(
 
     override suspend fun registerUser(user: User) {
 
-        val existing = userDao.getByEmail(user.email)
-
-        if(existing != null) {
-
-        throw IllegalStateException("User already exist")
-        }
         userDao.insert(user.toEntity())
 
     }
@@ -37,6 +31,10 @@ class RoomAuthRepository(
     override suspend fun getUserById(id:String):User? {
         return userDao.getById(id)?.toDomain()
 
+    }
+
+    override suspend fun getUserByEmail(email: String): User? {
+        return userDao.getByEmail(email)?.toDomain()
     }
 
 

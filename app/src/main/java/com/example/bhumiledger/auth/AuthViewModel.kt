@@ -3,6 +3,7 @@ package com.example.bhumiledger.auth
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.bhumiledger.domain.model.UserRole
+import com.example.bhumiledger.domain.result.DomainResult
 import com.example.bhumiledger.domain.usecase.LoginUserUseCase
 import com.example.bhumiledger.domain.usecase.RegisterUserUseCase
 import com.example.bhumiledger.session.SessionManager
@@ -21,6 +22,7 @@ class AuthViewModel(
 
     fun logout() {
         sessionManager.clearSession()
+        _authState.value = AuthState.Idle
     }
     fun getCurrentUserId(): String? {
         return sessionManager.getUserId()
@@ -41,40 +43,52 @@ class AuthViewModel(
         viewModelScope.launch {
             _authState.value = AuthState.Loading
 
-            try {
-                val user = registerUserUseCase(
-                    name,
-                    email,
-                    passwordHash,
-                    role
-                )
+            when (val result = registerUserUseCase(
+                name,
+                email,
+                passwordHash,
+                role
+            )) {
 
-                // Auto login after register
-                sessionManager.saveSession(user.id, user.role)
+                is DomainResult.Success -> {
 
-                _authState.value = AuthState.Success
+                    val user = result.data
 
-            } catch (e: Exception) {
-                _authState.value = AuthState.Error(
-                    e.message ?: "Registration failed"
-                )
+                    sessionManager.saveSession(
+                        user.id,
+                        user.role
+                    )
+
+                    _authState.value = AuthState.Success
+                }
+
+                is DomainResult.Failure -> {
+                    _authState.value =
+                        AuthState.Error(result.error.toMessage())
+                }
             }
         }
     }
+
 
 
     fun login(email: String, passwordHash: String) {
         viewModelScope.launch {
             _authState.value = AuthState.Loading
 
-            val user = loginUserUseCase(email, passwordHash)
+            when (val result = loginUserUseCase(email, passwordHash)) {
 
-            if (user != null) {
-                sessionManager.saveSession(user.id, user.role)
-                _authState.value = AuthState.Success
-            } else {
-                _authState.value = AuthState.Error("Invalid credentials")
+                is DomainResult.Success -> {
+                    val user = result.data
+                    sessionManager.saveSession(user.id, user.role)
+                    _authState.value = AuthState.Success
+                }
+
+                is DomainResult.Failure -> {
+                    _authState.value =
+                        AuthState.Error(result.error.toMessage())
+                }
             }
         }
     }
-}
+    }

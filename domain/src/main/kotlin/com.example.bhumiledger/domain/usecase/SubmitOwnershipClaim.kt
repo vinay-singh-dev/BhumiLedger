@@ -18,6 +18,12 @@ class SubmitOwnershipClaim(
         claimantId: String
     ): DomainResult<OwnershipClaim> {
 
+        if (parcelId.isBlank() || claimantId.isBlank()) {
+            return DomainResult.Failure(
+                DomainError.InvalidInput
+            )
+        }
+
         // CRITICAL: prevent claim if parcel already owned
         val existingOwner =
             registryRepository.getByParcelId(parcelId)

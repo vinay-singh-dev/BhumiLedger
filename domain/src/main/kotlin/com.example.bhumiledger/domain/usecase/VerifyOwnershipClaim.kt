@@ -21,8 +21,12 @@ class VerifyOwnershipClaim(
         // CRITICAL: Only authority can verify
         if (role != UserRole.AUTHORITY) {
             return DomainResult.Failure(
-                DomainError.InvalidClaimState
+                DomainError.UnauthorizedAccess
             )
+        }
+
+        if (claimId.isBlank()) {
+            return DomainResult.Failure(DomainError.InvalidInput)
         }
 
         val claim =

@@ -1,6 +1,7 @@
 package com.example.bhumiledger.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation.compose.*
 import com.example.bhumiledger.MainViewModel
 import com.example.bhumiledger.auth.AuthViewModel
@@ -8,6 +9,7 @@ import com.example.bhumiledger.ui.CitizenClaimScreen
 import com.example.bhumiledger.ui.AuthorityVerificationScreen
 import com.example.bhumiledger.auth.LoginScreen
 import com.example.bhumiledger.auth.RegisterScreen
+import com.example.bhumiledger.domain.model.UserRole
 
 @Composable
 fun BhumiLedgerNavGraph(
@@ -16,6 +18,20 @@ fun BhumiLedgerNavGraph(
 ) {
 
     val navController = rememberNavController()
+    val role = authViewModel.getCurrentUserRole()
+
+    LaunchedEffect(role) {
+        if (role != null) {
+            when (role) {
+                UserRole.CITIZEN -> navController.navigate("citizen") {
+                    popUpTo("login") { inclusive = true }
+                }
+                UserRole.AUTHORITY -> navController.navigate("authority") {
+                    popUpTo("login") { inclusive = true }
+                }
+            }
+        }
+    }
 
     NavHost(
         navController = navController,

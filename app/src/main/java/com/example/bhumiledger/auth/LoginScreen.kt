@@ -21,20 +21,8 @@ fun LoginScreen(
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
-    // 🔹 Auto redirect if already logged in
-    LaunchedEffect(Unit) {
-        val role = authViewModel.getCurrentUserRole()
-        if (role != null) {
-            when (role) {
-                UserRole.CITIZEN -> navController.navigate("citizen") {
-                    popUpTo("login") { inclusive = true }
-                }
-                UserRole.AUTHORITY -> navController.navigate("authority") {
-                    popUpTo("login") { inclusive = true }
-                }
-            }
-        }
-    }
+
+
 
     // 🔹 Redirect after successful login
     LaunchedEffect(state) {

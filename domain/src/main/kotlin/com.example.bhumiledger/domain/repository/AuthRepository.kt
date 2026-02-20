@@ -12,4 +12,6 @@ interface AuthRepository {
     ): User?
 
     suspend fun getUserById(id: String): User?
+
+    suspend fun getUserByEmail(email: String): User?
 }
