@@ -9,6 +9,7 @@ import com.example.bhumiledger.data.repository.RoomRegistryRepository
 import com.example.bhumiledger.domain.model.OwnershipClaim
 import com.example.bhumiledger.domain.model.UserRole
 import com.example.bhumiledger.domain.usecase.CreateRegistryEntry
+import com.example.bhumiledger.domain.usecase.GetClaimsByUserUseCase
 import com.example.bhumiledger.domain.usecase.GetOwnershipHistory
 import com.example.bhumiledger.domain.usecase.GetPendingClaimsUseCase
 import com.example.bhumiledger.domain.usecase.LoginUserUseCase
@@ -35,6 +36,8 @@ class BhumiLedgerContainer(context: Context) {
     private val claimRepository =
         RoomClaimRepository(claimDao)
 
+
+
     private val registryRepository =
         RoomRegistryRepository(registryDao)
 
@@ -55,6 +58,9 @@ class BhumiLedgerContainer(context: Context) {
 
     val getPendingClaimsUseCase =
         GetPendingClaimsUseCase(claimRepository)
+
+    val getClaimsByUserUseCase =
+        GetClaimsByUserUseCase(claimRepository)
 
     private val submitOwnershipClaimUseCase =
         SubmitOwnershipClaim(
@@ -101,4 +107,7 @@ class BhumiLedgerContainer(context: Context) {
         parcelId: String
     ) =
         getOwnershipHistoryUseCase(parcelId)
+
+    suspend fun getClaimsByUser(userId: String) =
+        getClaimsByUserUseCase(userId)
 }

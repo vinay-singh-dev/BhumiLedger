@@ -75,4 +75,15 @@ class RoomClaimRepository(
             )
         }
     }
+
+    override suspend fun getClaimsByUser(userId: String): List<OwnershipClaim> {
+        return dao.getByUserId(userId).map {
+            OwnershipClaim(
+                id = it.claimId,
+                parcelId = it.parcelId,
+                claimantId = it.claimantId,
+                status = ClaimStatus.valueOf(it.status)
+            )
+        }
+    }
 }

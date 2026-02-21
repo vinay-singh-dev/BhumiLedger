@@ -1,6 +1,8 @@
 package com.example.bhumiledger.ui
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material3.*
@@ -11,6 +13,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.bhumiledger.MainViewModel
 import com.example.bhumiledger.auth.AuthViewModel
+import com.example.bhumiledger.domain.model.ClaimStatus
 
 @Composable
 fun CitizenClaimScreen(
@@ -20,6 +23,12 @@ fun CitizenClaimScreen(
 ) {
 
     var parcelId by remember { mutableStateOf("") }
+
+    LaunchedEffect(Unit) {
+        authViewModel.getCurrentUserId()?.let {
+            mainViewModel.loadUserClaims(it)
+        }
+    }
 
     Box(
         modifier = Modifier.fillMaxSize()
@@ -91,6 +100,43 @@ fun CitizenClaimScreen(
             }
 
             Text("Status: ${mainViewModel.status}")
+
+            Text(
+                text = "My Claims",
+                style = MaterialTheme.typography.headlineSmall
+            )
+
+            LazyColumn {
+                items(mainViewModel.userClaims) { claim ->
+
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 6.dp)
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(12.dp)
+                        ) {
+
+                            Text("Parcel: ${claim.parcelId}")
+                            Text("Status: ${claim.status}")
+
+                            when (claim.status) {
+                                ClaimStatus.PENDING -> {
+                                    Text("Waiting for authority approval")
+                                }
+                                ClaimStatus.VERIFIED -> {
+                                    Text("Ownership granted")
+                                }
+                                ClaimStatus.REJECTED -> {
+                                    Text("Claim rejected")
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
         }
     }
 }

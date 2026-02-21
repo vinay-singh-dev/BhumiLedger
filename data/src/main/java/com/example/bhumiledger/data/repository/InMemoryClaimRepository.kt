@@ -33,4 +33,8 @@ class InMemoryClaimRepository: ClaimRepository {
     override suspend fun getAllPendingClaims(): List<OwnershipClaim> {
         return claims.filter { it.status == ClaimStatus.PENDING }
     }
+
+    override suspend fun getClaimsByUser(userId: String): List<OwnershipClaim> {
+        return claims.filter { it.claimantId == userId }
+    }
 }

@@ -18,6 +18,9 @@ class MainViewModel(
     var status by mutableStateOf("Idle")
         private set
 
+    var userClaims by mutableStateOf<List<OwnershipClaim>>(emptyList())
+        private set
+
     var pendingClaims by mutableStateOf<List<OwnershipClaim>>(emptyList())
         private set
 
@@ -31,6 +34,16 @@ class MainViewModel(
     // ===============================
     // CITIZEN ACTION
     // ===============================
+
+    fun loadUserClaims(userId: String) {
+        viewModelScope.launch {
+            val result = container.getClaimsByUser(userId)
+            if (result is DomainResult.Success) {
+                userClaims = result.data
+            }
+        }
+    }
+
     fun submitClaim(parcelId: String, claimantId: String) {
 
         viewModelScope.launch {
@@ -53,6 +66,8 @@ class MainViewModel(
 
                     status = "Claim Submitted: ${claim.id}"
 
+                    loadUserClaims(claimantId)
+
                     Log.d("ROOM_TEST", status)
                 }
 
@@ -65,6 +80,8 @@ class MainViewModel(
             }
         }
     }
+
+
 
 
     // ===============================

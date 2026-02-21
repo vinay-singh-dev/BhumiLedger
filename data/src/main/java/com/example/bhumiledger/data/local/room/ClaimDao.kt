@@ -28,4 +28,7 @@ interface ClaimDao {
 
     @Query("SELECT * FROM claims WHERE status = 'PENDING'")
     suspend fun getAllPending(): List<ClaimEntity>
+
+    @Query("SELECT * FROM claims WHERE claimantId = :userId")
+    suspend fun getByUserId(userId: String): List<ClaimEntity>
 }
