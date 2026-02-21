@@ -12,9 +12,7 @@ class RoomClaimRepository(
     private val dao: ClaimDao
 ) : ClaimRepository {
 
-    override fun saveClaim(claim: OwnershipClaim) {
-
-        Log.d("ROOM_TEST", "saveClaim called with: $claim")
+    override suspend fun saveClaim(claim: OwnershipClaim) {
 
         val entity = ClaimEntity(
             claimId = claim.id,
@@ -24,72 +22,57 @@ class RoomClaimRepository(
             createdAt = System.currentTimeMillis()
         )
 
-        runBlocking {
-            dao.insert(entity)
-        }
-
-        Log.d("ROOM_TEST", "saveClaim SUCCESS")
+        dao.insert(entity)
     }
 
-    override fun getClaimById(claimId: String): OwnershipClaim? {
+    override suspend fun getClaimById(claimId: String): OwnershipClaim? {
 
-        Log.d("ROOM_TEST", "getClaimById called: $claimId")
+        val entity = dao.getById(claimId)
 
-        return runBlocking {
-
-            val entity = dao.getById(claimId)
-
-            Log.d("ROOM_TEST", "getClaimById result: $entity")
-
-            entity?.let {
-                OwnershipClaim(
-                    id = it.claimId,
-                    parcelId = it.parcelId,
-                    claimantId = it.claimantId,
-                    status = ClaimStatus.valueOf(it.status)
-                )
-            }
-        }
-    }
-
-    override fun getPendingClaimForParcel(parcelId: String): OwnershipClaim? {
-
-        Log.d("ROOM_TEST", "getPendingClaimForParcel called: $parcelId")
-
-        return runBlocking {
-
-            val entity = dao.getPendingClaim(parcelId)
-
-            Log.d("ROOM_TEST", "getPendingClaimForParcel result: $entity")
-
-            entity?.let {
-                OwnershipClaim(
-                    id = it.claimId,
-                    parcelId = it.parcelId,
-                    claimantId = it.claimantId,
-                    status = ClaimStatus.valueOf(it.status)
-                )
-            }
-        }
-    }
-
-    override fun updateClaim(claim: OwnershipClaim) {
-
-        runBlocking {
-
-            val existing = dao.getEntityByClaimId(claim.id)
-                ?: run {
-                    Log.e("ROOM_TEST", "Update failed. Claim not found: ${claim.id}")
-                    return@runBlocking
-                }
-
-            val updated = existing.copy(
-                status = claim.status.name
+        return entity?.let {
+            OwnershipClaim(
+                id = it.claimId,
+                parcelId = it.parcelId,
+                claimantId = it.claimantId,
+                status = ClaimStatus.valueOf(it.status)
             )
+        }
+    }
 
-            dao.update(updated)
+    override suspend fun getPendingClaimForParcel(parcelId: String): OwnershipClaim? {
 
-            Log.d("ROOM_TEST", "Claim updated successfully: ${claim.id}")
+        val entity = dao.getPendingClaim(parcelId)
+
+        return entity?.let {
+            OwnershipClaim(
+                id = it.claimId,
+                parcelId = it.parcelId,
+                claimantId = it.claimantId,
+                status = ClaimStatus.valueOf(it.status)
+            )
+        }
+    }
+
+    override suspend fun updateClaim(claim: OwnershipClaim) {
+
+        val existing = dao.getEntityByClaimId(claim.id)
+            ?: return
+
+        val updated = existing.copy(
+            status = claim.status.name
+        )
+
+        dao.update(updated)
+    }
+
+    override suspend fun getAllPendingClaims(): List<OwnershipClaim> {
+        return dao.getAllPending().map {
+            OwnershipClaim(
+                id = it.claimId,
+                parcelId = it.parcelId,
+                claimantId = it.claimantId,
+                status = ClaimStatus.valueOf(it.status)
+            )
         }
     }
 }

@@ -13,7 +13,7 @@ class SubmitOwnershipClaim(
     private val registryRepository: RegistryRepository
 ) {
 
-    operator fun invoke(
+    suspend operator fun invoke(
         parcelId: String,
         claimantId: String
     ): DomainResult<OwnershipClaim> {

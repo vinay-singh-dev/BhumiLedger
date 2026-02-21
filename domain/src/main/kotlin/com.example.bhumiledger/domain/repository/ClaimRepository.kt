@@ -3,9 +3,10 @@ package com.example.bhumiledger.domain.repository
 import com.example.bhumiledger.domain.model.OwnershipClaim
 
 interface ClaimRepository {
-    fun getPendingClaimForParcel(parcelId: String): OwnershipClaim?
-    fun saveClaim(claim: OwnershipClaim)
-    fun getClaimById(claimId: String): OwnershipClaim?
-    fun updateClaim(claim: OwnershipClaim)
+   suspend fun getPendingClaimForParcel(parcelId: String): OwnershipClaim?
+    suspend fun saveClaim(claim: OwnershipClaim)
+    suspend fun getClaimById(claimId: String): OwnershipClaim?
+    suspend fun updateClaim(claim: OwnershipClaim)
+    suspend fun getAllPendingClaims(): List<OwnershipClaim>
 
 }

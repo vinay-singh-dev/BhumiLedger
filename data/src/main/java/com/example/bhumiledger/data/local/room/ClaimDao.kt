@@ -25,4 +25,7 @@ interface ClaimDao {
     // CRITICAL: Used internally to fetch correct primary key for update
     @Query("SELECT * FROM claims WHERE claimId = :claimId LIMIT 1")
     suspend fun getEntityByClaimId(claimId: String): ClaimEntity?
+
+    @Query("SELECT * FROM claims WHERE status = 'PENDING'")
+    suspend fun getAllPending(): List<ClaimEntity>
 }

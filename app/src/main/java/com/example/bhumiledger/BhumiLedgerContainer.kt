@@ -10,6 +10,7 @@ import com.example.bhumiledger.domain.model.OwnershipClaim
 import com.example.bhumiledger.domain.model.UserRole
 import com.example.bhumiledger.domain.usecase.CreateRegistryEntry
 import com.example.bhumiledger.domain.usecase.GetOwnershipHistory
+import com.example.bhumiledger.domain.usecase.GetPendingClaimsUseCase
 import com.example.bhumiledger.domain.usecase.LoginUserUseCase
 import com.example.bhumiledger.domain.usecase.RegisterUserUseCase
 import com.example.bhumiledger.domain.usecase.SubmitOwnershipClaim
@@ -21,44 +22,46 @@ class BhumiLedgerContainer(context: Context) {
     private val db =
         DatabaseProvider.getDatabase(context)
 
+    // --- DAO ---
     private val blockDao = db.blockDao()
+    private val claimDao = db.claimDao()
+    private val registryDao = db.registryDao()
+    private val userDao = db.userDao()
 
+    // --- Repositories ---
     private val blockchainRepository =
         RoomBlockchainRepository(blockDao)
 
-    private val userDao = db.userDao()
+    private val claimRepository =
+        RoomClaimRepository(claimDao)
+
+    private val registryRepository =
+        RoomRegistryRepository(registryDao)
 
     private val authRepository =
         RoomAuthRepository(userDao)
 
+    // --- Session ---
+    val sessionManager: SessionManager by lazy {
+        SessionManager(context)
+    }
+
+    // --- UseCases ---
     val loginUserUseCase =
         LoginUserUseCase(authRepository)
 
     val registerUserUseCase =
         RegisterUserUseCase(authRepository)
 
-    val sessionManager: SessionManager by lazy {
-        SessionManager(context)
-    }
+    val getPendingClaimsUseCase =
+        GetPendingClaimsUseCase(claimRepository)
 
-
-
-    private val claimRepository =
-        RoomClaimRepository(db.claimDao())
-
-    private val registryRepository =
-        RoomRegistryRepository(db.registryDao())
-
-
-    // FIXED
     private val submitOwnershipClaimUseCase =
         SubmitOwnershipClaim(
             claimRepository,
             registryRepository
         )
 
-
-    // FIXED (THIS WAS WRONG)
     private val verifyOwnershipClaimUseCase =
         VerifyOwnershipClaim(
             claimRepository,
@@ -66,50 +69,36 @@ class BhumiLedgerContainer(context: Context) {
             blockchainRepository
         )
 
-
     private val createRegistryEntryUseCase =
-        CreateRegistryEntry(
-            registryRepository
-        )
+        CreateRegistryEntry(registryRepository)
 
     private val getOwnershipHistoryUseCase =
-        GetOwnershipHistory(
-            registryRepository
-        )
+        GetOwnershipHistory(registryRepository)
 
+    // --- Exposed functions ---
 
-    fun submitOwnershipClaim(
+    suspend fun submitOwnershipClaim(
         parcelId: String,
         claimantId: String
     ) =
-        submitOwnershipClaimUseCase(
-            parcelId,
-            claimantId
-        )
+        submitOwnershipClaimUseCase(parcelId, claimantId)
 
+    suspend fun getPendingClaims() =
+        getPendingClaimsUseCase()
 
     suspend fun verifyOwnershipClaim(
         claimId: String,
         role: UserRole
     ) =
-        verifyOwnershipClaimUseCase(
-            claimId,
-            role
-        )
-
+        verifyOwnershipClaimUseCase(claimId, role)
 
     fun createRegistryEntry(
         claim: OwnershipClaim
     ) =
-        createRegistryEntryUseCase(
-            claim
-        )
-
+        createRegistryEntryUseCase(claim)
 
     fun getOwnershipHistory(
         parcelId: String
     ) =
-        getOwnershipHistoryUseCase(
-            parcelId
-        )
+        getOwnershipHistoryUseCase(parcelId)
 }

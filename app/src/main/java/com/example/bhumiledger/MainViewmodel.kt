@@ -18,6 +18,9 @@ class MainViewModel(
     var status by mutableStateOf("Idle")
         private set
 
+    var pendingClaims by mutableStateOf<List<OwnershipClaim>>(emptyList())
+        private set
+
     var lastClaimId by mutableStateOf("")
         private set
 
@@ -85,6 +88,8 @@ class MainViewModel(
 
                     status = "Claim VERIFIED"
 
+                    loadPendingClaims()
+
                     Log.d("ROOM_TEST", status)
                 }
 
@@ -129,6 +134,22 @@ class MainViewModel(
                     status = result.error.toString()
 
                     Log.e("ROOM_TEST", status)
+                }
+            }
+        }
+    }
+
+    fun loadPendingClaims() {
+        viewModelScope.launch {
+
+            val result = container.getPendingClaims()
+
+            when (result) {
+                is DomainResult.Success -> {
+                    pendingClaims = result.data
+                }
+                is DomainResult.Failure -> {
+                    status = result.error.toString()
                 }
             }
         }

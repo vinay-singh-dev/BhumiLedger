@@ -1,6 +1,8 @@
 package com.example.bhumiledger.ui
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material3.*
@@ -19,13 +21,16 @@ fun AuthorityVerificationScreen(
     authViewModel: AuthViewModel
 ) {
 
-    var claimId by remember { mutableStateOf("") }
+    // 🔥 Load pending claims when screen opens
+    LaunchedEffect(Unit) {
+        mainViewModel.loadPendingClaims()
+    }
 
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
 
-        // Logout Button (Top Right)
+        // Logout Button
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -35,14 +40,12 @@ fun AuthorityVerificationScreen(
             ElevatedButton(
                 onClick = {
                     authViewModel.logout()
-
                     navController.navigate("login") {
                         popUpTo(navController.graph.startDestinationId) {
                             inclusive = true
                         }
                         launchSingleTop = true
                     }
-
                 }
             ) {
                 Icon(
@@ -54,34 +57,48 @@ fun AuthorityVerificationScreen(
             }
         }
 
-        // Center Content
         Column(
             modifier = Modifier
                 .align(Alignment.Center)
-                .fillMaxWidth(0.85f),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+                .fillMaxWidth(0.9f),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
 
             Text(
-                text = "Authority Panel",
+                text = "Pending Claims",
                 style = MaterialTheme.typography.headlineMedium
             )
 
-            OutlinedTextField(
-                value = claimId,
-                onValueChange = { claimId = it },
-                label = { Text("Claim ID") },
-                modifier = Modifier.fillMaxWidth()
-            )
+            LazyColumn {
 
-            Button(
-                onClick = {
-                    mainViewModel.verifyClaim(claimId)
-                },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("Verify Claim")
+                items(mainViewModel.pendingClaims) { claim ->
+
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 6.dp)
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(12.dp)
+                        ) {
+
+                            Text("Parcel: ${claim.parcelId}")
+                            Text("Claimant: ${claim.claimantId}")
+                            Text("Status: ${claim.status}")
+
+                            Spacer(modifier = Modifier.height(8.dp))
+
+                            Button(
+                                onClick = {
+                                    mainViewModel.verifyClaim(claim.id)
+                                },
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Text("Verify")
+                            }
+                        }
+                    }
+                }
             }
 
             Text("Status: ${mainViewModel.status}")
