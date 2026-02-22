@@ -69,7 +69,9 @@ fun AuthorityVerificationScreen(
                 style = MaterialTheme.typography.headlineMedium
             )
 
-            LazyColumn {
+            LazyColumn(
+                modifier = Modifier.weight(1f, fill = false)
+            ) {
 
                 items(mainViewModel.pendingClaims) { claim ->
 
@@ -116,7 +118,18 @@ fun AuthorityVerificationScreen(
                 }
             }
 
-                Text("Status: ${mainViewModel.status}")
+            // 👇 GLOBAL BLOCKCHAIN CONTROLS
+
+            Button(
+                onClick = { mainViewModel.validateChain() },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Validate Blockchain")
             }
+
+            Text("Chain Valid: ${mainViewModel.isChainValid}")
+
+            Text("Status: ${mainViewModel.status}")
         }
     }
+}

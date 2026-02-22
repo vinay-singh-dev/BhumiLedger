@@ -21,6 +21,9 @@ class MainViewModel(
     var userClaims by mutableStateOf<List<OwnershipClaim>>(emptyList())
         private set
 
+    var isChainValid by mutableStateOf(true)
+        private set
+
     var pendingClaims by mutableStateOf<List<OwnershipClaim>>(emptyList())
         private set
 
@@ -41,6 +44,12 @@ class MainViewModel(
             if (result is DomainResult.Success) {
                 userClaims = result.data
             }
+        }
+    }
+
+    fun validateChain() {
+        viewModelScope.launch {
+            isChainValid = container.validateBlockchain()
         }
     }
 

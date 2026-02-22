@@ -16,6 +16,7 @@ import com.example.bhumiledger.domain.usecase.LoginUserUseCase
 import com.example.bhumiledger.domain.usecase.RegisterUserUseCase
 import com.example.bhumiledger.domain.usecase.RejectOwnershipClaim
 import com.example.bhumiledger.domain.usecase.SubmitOwnershipClaim
+import com.example.bhumiledger.domain.usecase.ValidateBlockchainUseCase
 import com.example.bhumiledger.domain.usecase.VerifyOwnershipClaim
 import com.example.bhumiledger.session.SessionManager
 
@@ -33,6 +34,9 @@ class BhumiLedgerContainer(context: Context) {
     // --- Repositories ---
     private val blockchainRepository =
         RoomBlockchainRepository(blockDao)
+
+    private val validateBlockchainUseCase =
+        ValidateBlockchainUseCase(blockchainRepository)
 
     private val claimRepository =
         RoomClaimRepository(claimDao)
@@ -95,6 +99,10 @@ class BhumiLedgerContainer(context: Context) {
 
     suspend fun getPendingClaims() =
         getPendingClaimsUseCase()
+
+
+    suspend fun validateBlockchain() =
+        validateBlockchainUseCase()
 
     suspend fun verifyOwnershipClaim(
         claimId: String,

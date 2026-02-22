@@ -13,6 +13,6 @@ interface BlockDao {
     @Insert
     suspend fun insert(block: BlockEntity)
 
-    @Query("SELECT * FROM blocks")
+    @Query("SELECT * FROM blocks ORDER BY `index` ASC")
     suspend fun getAll(): List<BlockEntity>
 }
