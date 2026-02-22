@@ -88,20 +88,35 @@ fun AuthorityVerificationScreen(
 
                             Spacer(modifier = Modifier.height(8.dp))
 
-                            Button(
-                                onClick = {
-                                    mainViewModel.verifyClaim(claim.id)
-                                },
-                                modifier = Modifier.fillMaxWidth()
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
-                                Text("Verify")
+
+                                Button(
+                                    onClick = {
+                                        mainViewModel.verifyClaim(claim.id)
+                                    },
+                                    modifier = Modifier.weight(1f)
+                                ) {
+                                    Text("Verify")
+                                }
+
+                                Button(
+                                    onClick = {
+                                        mainViewModel.rejectClaim(claim.id)
+                                    },
+                                    modifier = Modifier.weight(1f)
+                                ) {
+                                    Text("Reject")
+                                }
                             }
                         }
                     }
                 }
             }
 
-            Text("Status: ${mainViewModel.status}")
+                Text("Status: ${mainViewModel.status}")
+            }
         }
     }
-}

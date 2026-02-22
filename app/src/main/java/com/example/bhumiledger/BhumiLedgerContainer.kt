@@ -14,6 +14,7 @@ import com.example.bhumiledger.domain.usecase.GetOwnershipHistory
 import com.example.bhumiledger.domain.usecase.GetPendingClaimsUseCase
 import com.example.bhumiledger.domain.usecase.LoginUserUseCase
 import com.example.bhumiledger.domain.usecase.RegisterUserUseCase
+import com.example.bhumiledger.domain.usecase.RejectOwnershipClaim
 import com.example.bhumiledger.domain.usecase.SubmitOwnershipClaim
 import com.example.bhumiledger.domain.usecase.VerifyOwnershipClaim
 import com.example.bhumiledger.session.SessionManager
@@ -61,6 +62,9 @@ class BhumiLedgerContainer(context: Context) {
 
     val getClaimsByUserUseCase =
         GetClaimsByUserUseCase(claimRepository)
+
+    private val rejectOwnershipClaimUseCase =
+        RejectOwnershipClaim(claimRepository)
 
     private val submitOwnershipClaimUseCase =
         SubmitOwnershipClaim(
@@ -110,4 +114,9 @@ class BhumiLedgerContainer(context: Context) {
 
     suspend fun getClaimsByUser(userId: String) =
         getClaimsByUserUseCase(userId)
+
+    suspend fun rejectOwnershipClaim(
+        claimId: String,
+        role: UserRole
+    ) = rejectOwnershipClaimUseCase(claimId, role)
 }

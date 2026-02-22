@@ -120,6 +120,29 @@ class MainViewModel(
         }
     }
 
+    fun rejectClaim(claimId: String) {
+        viewModelScope.launch {
+
+            val result =
+                container.rejectOwnershipClaim(
+                    claimId,
+                    UserRole.AUTHORITY
+                )
+
+            when (result) {
+
+                is DomainResult.Success -> {
+                    status = "Claim REJECTED"
+                    loadPendingClaims()
+                }
+
+                is DomainResult.Failure -> {
+                    status = result.error.toString()
+                }
+            }
+        }
+    }
+
 
     // ===============================
     // LOAD HISTORY
