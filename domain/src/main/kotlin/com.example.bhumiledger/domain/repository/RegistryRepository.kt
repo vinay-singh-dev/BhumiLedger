@@ -5,9 +5,9 @@ import com.example.bhumiledger.domain.model.RegistryEntry
 
 
 interface RegistryRepository {
-    fun save(entry: RegistryEntry)
-    fun getByParcelId(parcelId: String): RegistryEntry?
-    fun getHistoryForParcel(parcelId: String): List<RegistryEntry>
+    suspend fun save(entry: RegistryEntry)
+    suspend fun getByParcelId(parcelId: String): RegistryEntry?
+   suspend  fun getHistoryForParcel(parcelId: String): List<RegistryEntry>
 
 }
 

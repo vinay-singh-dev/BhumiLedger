@@ -10,7 +10,7 @@ import com.example.bhumiledger.domain.result.DomainResult
 class CreateRegistryEntry(
     private val registryRepository: RegistryRepository
 ) {
-    operator fun invoke(claim: OwnershipClaim): DomainResult<RegistryEntry> {
+    suspend operator fun invoke(claim: OwnershipClaim): DomainResult<RegistryEntry> {
 
 
         if (claim.status != ClaimStatus.VERIFIED) {

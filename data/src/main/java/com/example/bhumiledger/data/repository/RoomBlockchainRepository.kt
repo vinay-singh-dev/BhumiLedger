@@ -1,7 +1,6 @@
 package com.example.bhumiledger.data.repository
 
 import com.example.bhumiledger.data.local.room.BlockDao
-import com.example.bhumiledger.data.local.room.BlockEntity
 import com.example.bhumiledger.data.mapper.toDomain
 import com.example.bhumiledger.data.mapper.toEntity
 import com.example.bhumiledger.domain.model.Block

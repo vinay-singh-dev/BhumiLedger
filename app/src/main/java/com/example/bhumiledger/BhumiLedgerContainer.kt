@@ -102,12 +102,12 @@ class BhumiLedgerContainer(context: Context) {
     ) =
         verifyOwnershipClaimUseCase(claimId, role)
 
-    fun createRegistryEntry(
+    suspend fun createRegistryEntry(
         claim: OwnershipClaim
     ) =
         createRegistryEntryUseCase(claim)
 
-    fun getOwnershipHistory(
+    suspend fun getOwnershipHistory(
         parcelId: String
     ) =
         getOwnershipHistoryUseCase(parcelId)

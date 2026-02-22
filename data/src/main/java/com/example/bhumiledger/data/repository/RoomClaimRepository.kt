@@ -1,12 +1,11 @@
 package com.example.bhumiledger.data.repository
 
-import android.util.Log
 import com.example.bhumiledger.data.local.room.ClaimDao
 import com.example.bhumiledger.data.local.room.ClaimEntity
 import com.example.bhumiledger.domain.model.ClaimStatus
 import com.example.bhumiledger.domain.model.OwnershipClaim
 import com.example.bhumiledger.domain.repository.ClaimRepository
-import kotlinx.coroutines.runBlocking
+
 
 class RoomClaimRepository(
     private val dao: ClaimDao

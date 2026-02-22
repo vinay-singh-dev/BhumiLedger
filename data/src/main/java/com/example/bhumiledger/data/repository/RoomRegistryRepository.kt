@@ -6,48 +6,39 @@ import com.example.bhumiledger.data.local.room.toDomain
 import com.example.bhumiledger.data.local.room.toEntity
 import com.example.bhumiledger.domain.model.RegistryEntry
 import com.example.bhumiledger.domain.repository.RegistryRepository
-import kotlinx.coroutines.runBlocking
 
 class RoomRegistryRepository(
     private val dao: RegistryDao
 ) : RegistryRepository {
 
-    override fun save(entry: RegistryEntry) {
+    override suspend fun save(entry: RegistryEntry) {
 
         Log.d("ROOM_TEST", "saveRegistryEntry called: $entry")
 
-        runBlocking {
-            dao.insert(entry.toEntity())
-        }
+        dao.insert(entry.toEntity())
 
         Log.d("ROOM_TEST", "saveRegistryEntry SUCCESS")
     }
 
-    override fun getByParcelId(parcelId: String): RegistryEntry? {
+    override suspend fun getByParcelId(parcelId: String): RegistryEntry? {
 
         Log.d("ROOM_TEST", "getByParcelId called: $parcelId")
 
-        return runBlocking {
+        val entity = dao.getLatestForParcel(parcelId)
 
-            val entity = dao.getLatestForParcel(parcelId)
+        Log.d("ROOM_TEST", "getByParcelId result: $entity")
 
-            Log.d("ROOM_TEST", "getByParcelId result: $entity")
-
-            entity?.toDomain()
-        }
+        return entity?.toDomain()
     }
 
-    override fun getHistoryForParcel(parcelId: String): List<RegistryEntry> {
+    override suspend fun getHistoryForParcel(parcelId: String): List<RegistryEntry> {
 
         Log.d("ROOM_TEST", "getHistoryForParcel called: $parcelId")
 
-        return runBlocking {
+        val entities = dao.getHistoryForParcel(parcelId)
 
-            val entities = dao.getHistoryForParcel(parcelId)
+        Log.d("ROOM_TEST", "getHistoryForParcel result count: ${entities.size}")
 
-            Log.d("ROOM_TEST", "getHistoryForParcel result count: ${entities.size}")
-
-            entities.map { it.toDomain() }
-        }
+        return entities.map { it.toDomain() }
     }
 }

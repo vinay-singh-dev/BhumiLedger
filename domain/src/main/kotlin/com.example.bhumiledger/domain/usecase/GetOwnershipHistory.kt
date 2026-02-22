@@ -9,7 +9,7 @@ import java.util.Map.entry
 
 class GetOwnershipHistory(
     private val registryRepository : RegistryRepository) {
-    operator fun invoke (parcelId: String) : DomainResult<List<RegistryEntry>> {
+    suspend operator fun invoke (parcelId: String) : DomainResult<List<RegistryEntry>> {
         val history = registryRepository.getHistoryForParcel(parcelId)
         return DomainResult.Success(history)
     }
