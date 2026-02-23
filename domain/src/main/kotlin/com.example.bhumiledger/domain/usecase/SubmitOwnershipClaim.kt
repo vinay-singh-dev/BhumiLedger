@@ -24,15 +24,7 @@ class SubmitOwnershipClaim(
             )
         }
 
-        // CRITICAL: prevent claim if parcel already owned
-        val existingOwner =
-            registryRepository.getByParcelId(parcelId)
 
-        if (existingOwner != null) {
-            return DomainResult.Failure(
-                DomainError.OwnershipAlreadyExists
-            )
-        }
 
         // prevent duplicate pending claim
         val existingPending =
