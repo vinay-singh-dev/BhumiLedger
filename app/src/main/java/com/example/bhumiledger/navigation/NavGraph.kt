@@ -11,6 +11,7 @@ import com.example.bhumiledger.auth.LoginScreen
 import com.example.bhumiledger.auth.RegisterScreen
 import com.example.bhumiledger.domain.model.UserRole
 import com.example.bhumiledger.ui.BlockchainViewerScreen
+import com.example.bhumiledger.ui.ParcelHistoryScreen
 
 @Composable
 fun BhumiLedgerNavGraph(
@@ -74,6 +75,17 @@ fun BhumiLedgerNavGraph(
                 mainViewModel = mainViewModel,
                 navController = navController,
                 authViewModel = authViewModel
+            )
+        }
+
+        composable("parcel_history/{parcelId}") { backStackEntry ->
+
+            val parcelId = backStackEntry.arguments?.getString("parcelId") ?: ""
+
+            ParcelHistoryScreen(
+                parcelId = parcelId,
+                mainViewModel = mainViewModel,
+                navController = navController
             )
         }
     }

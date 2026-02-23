@@ -19,6 +19,7 @@ composeBom = "2024.09.00"
 
 room = "2.8.4"
 foundation = "1.10.3"
+runtime = "1.10.3"
 #compiler = "3.2.0-alpha11"
 
 
@@ -63,6 +64,7 @@ androidx-room-ktx ={ group = "androidx.room", name = "room-ktx", version.ref = "
 
 androidx-room-compiler ={ group = "androidx.room", name = "room-compiler", version.ref = "room" }
 androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation", version.ref = "foundation" }
+androidx-compose-runtime = { group = "androidx.compose.runtime", name = "runtime", version.ref = "runtime" }
 #androidx-compiler = { group = "androidx.databinding", name = "compiler", version.ref = "compiler" }
 
 

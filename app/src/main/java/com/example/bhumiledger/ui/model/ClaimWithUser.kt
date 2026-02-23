@@ -1,4 +1,4 @@
-package com.example.bhumiledger.ui
+package com.example.bhumiledger.ui.model
 
 import com.example.bhumiledger.domain.model.ClaimStatus
 

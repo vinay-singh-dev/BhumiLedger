@@ -1,5 +1,6 @@
 package com.example.bhumiledger.ui
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -84,7 +85,12 @@ fun AuthorityVerificationScreen(
                             modifier = Modifier.padding(12.dp)
                         ) {
 
-                            Text("Parcel: ${claim.parcelId}")
+                            Text(
+                                text = "Parcel: ${claim.parcelId}",
+                                modifier = Modifier.clickable {
+                                    navController.navigate("parcel_history/${claim.parcelId}")
+                                }
+                            )
                             Text("Claimant: ${claim.claimantName}")
                             Text("Status: ${claim.status}")
 

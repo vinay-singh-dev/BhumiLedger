@@ -10,7 +10,8 @@ import com.example.bhumiledger.domain.model.Block
 import com.example.bhumiledger.domain.model.UserRole
 import com.example.bhumiledger.domain.model.OwnershipClaim
 import com.example.bhumiledger.domain.result.DomainResult
-import com.example.bhumiledger.ui.ClaimWithUser
+import com.example.bhumiledger.ui.model.ClaimWithUser
+import com.example.bhumiledger.ui.model.RegistryEntryWithUser
 import kotlinx.coroutines.launch
 
 class MainViewModel(
@@ -30,11 +31,13 @@ class MainViewModel(
         private set
 
     var pendingClaims by mutableStateOf<List<ClaimWithUser>>(emptyList())
-
+    private set
     var lastClaimId by mutableStateOf("")
         private set
 
     var historySize by mutableStateOf(0)
+        private set
+    var ownershipHistory by mutableStateOf<List<RegistryEntryWithUser>>(emptyList())
         private set
 
 
@@ -47,6 +50,35 @@ class MainViewModel(
             val result = container.getClaimsByUser(userId)
             if (result is DomainResult.Success) {
                 userClaims = result.data
+            }
+        }
+    }
+
+    fun loadOwnershipHistory(parcelId: String) {
+        viewModelScope.launch {
+
+            val result = container.getOwnershipHistory(parcelId)
+
+            when (result) {
+
+                is DomainResult.Success -> {
+
+                    val mapped = result.data.map { entry ->
+
+                        val user = container.getUserById(entry.ownerId)
+
+                        RegistryEntryWithUser(
+                            ownerName = user?.name ?: "Unknown",
+                            timestamp = entry.createdAt
+                        )
+                    }
+
+                    ownershipHistory = mapped
+                }
+
+                is DomainResult.Failure -> {
+                    status = result.error.toString()
+                }
             }
         }
     }
