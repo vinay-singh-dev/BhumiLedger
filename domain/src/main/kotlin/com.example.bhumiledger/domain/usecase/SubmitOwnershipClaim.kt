@@ -36,6 +36,12 @@ class SubmitOwnershipClaim(
             )
         }
 
+        val existingOwner = registryRepository.getByParcelId(parcelId)
+
+        if (existingOwner != null && existingOwner.ownerId == claimantId) {
+            return DomainResult.Failure(DomainError.AlreadyCurrentOwner)
+        }
+
         val claim = OwnershipClaim(
             id = UUID.randomUUID().toString(),
             parcelId = parcelId,

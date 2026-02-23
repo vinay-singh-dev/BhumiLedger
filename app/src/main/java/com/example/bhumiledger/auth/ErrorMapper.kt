@@ -12,5 +12,7 @@ fun DomainError.toMessage(): String {
         DomainError.InvalidInput -> "Invalid input"
         DomainError.UserAlreadyExists -> "User already exists"
         DomainError.InvalidCredentials -> "Invalid Credentials"
+       DomainError.AlreadyCurrentOwner -> "Already current owner of this Land"
+
     }
 }

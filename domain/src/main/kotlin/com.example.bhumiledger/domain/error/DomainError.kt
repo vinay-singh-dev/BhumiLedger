@@ -9,6 +9,7 @@ sealed class DomainError {
     object InvalidInput:DomainError()
     object UserAlreadyExists:DomainError()
     object InvalidCredentials : DomainError()
+    object AlreadyCurrentOwner:DomainError()
 
 
 }
