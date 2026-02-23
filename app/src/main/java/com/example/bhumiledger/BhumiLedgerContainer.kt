@@ -130,4 +130,7 @@ class BhumiLedgerContainer(context: Context) {
 
     suspend fun getAllBlocks() =
         blockchainRepository.getAllBlocks()
+
+    suspend fun getUserById(userId: String) =
+        authRepository.getUserById(userId)
 }

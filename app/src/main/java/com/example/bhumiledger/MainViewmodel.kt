@@ -10,6 +10,7 @@ import com.example.bhumiledger.domain.model.Block
 import com.example.bhumiledger.domain.model.UserRole
 import com.example.bhumiledger.domain.model.OwnershipClaim
 import com.example.bhumiledger.domain.result.DomainResult
+import com.example.bhumiledger.ui.ClaimWithUser
 import kotlinx.coroutines.launch
 
 class MainViewModel(
@@ -28,8 +29,7 @@ class MainViewModel(
     var isChainValid by mutableStateOf(true)
         private set
 
-    var pendingClaims by mutableStateOf<List<OwnershipClaim>>(emptyList())
-        private set
+    var pendingClaims by mutableStateOf<List<ClaimWithUser>>(emptyList())
 
     var lastClaimId by mutableStateOf("")
         private set
@@ -99,8 +99,6 @@ class MainViewModel(
             }
         }
     }
-
-
 
 
     // ===============================
@@ -204,9 +202,24 @@ class MainViewModel(
             val result = container.getPendingClaims()
 
             when (result) {
+
                 is DomainResult.Success -> {
-                    pendingClaims = result.data
+
+                    val mapped = result.data.map { claim ->
+
+                        val user = container.getUserById(claim.claimantId)
+
+                        ClaimWithUser(
+                            id = claim.id,
+                            parcelId = claim.parcelId,
+                            claimantName = user?.name ?: "Unknown",
+                            status = claim.status
+                        )
+                    }
+
+                    pendingClaims = mapped
                 }
+
                 is DomainResult.Failure -> {
                     status = result.error.toString()
                 }

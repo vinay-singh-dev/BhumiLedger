@@ -85,7 +85,7 @@ fun AuthorityVerificationScreen(
                         ) {
 
                             Text("Parcel: ${claim.parcelId}")
-                            Text("Claimant: ${claim.claimantId}")
+                            Text("Claimant: ${claim.claimantName}")
                             Text("Status: ${claim.status}")
 
                             Spacer(modifier = Modifier.height(8.dp))
