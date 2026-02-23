@@ -127,4 +127,7 @@ class BhumiLedgerContainer(context: Context) {
         claimId: String,
         role: UserRole
     ) = rejectOwnershipClaimUseCase(claimId, role)
+
+    suspend fun getAllBlocks() =
+        blockchainRepository.getAllBlocks()
 }

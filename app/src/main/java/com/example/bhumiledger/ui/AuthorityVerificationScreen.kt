@@ -130,6 +130,13 @@ fun AuthorityVerificationScreen(
             Text("Chain Valid: ${mainViewModel.isChainValid}")
 
             Text("Status: ${mainViewModel.status}")
+
+            Button(
+                onClick = { navController.navigate("blockchain") },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("View Blockchain")
+            }
         }
     }
 }

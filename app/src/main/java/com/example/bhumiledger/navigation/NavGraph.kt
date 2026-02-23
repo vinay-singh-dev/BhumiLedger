@@ -10,6 +10,7 @@ import com.example.bhumiledger.ui.AuthorityVerificationScreen
 import com.example.bhumiledger.auth.LoginScreen
 import com.example.bhumiledger.auth.RegisterScreen
 import com.example.bhumiledger.domain.model.UserRole
+import com.example.bhumiledger.ui.BlockchainViewerScreen
 
 @Composable
 fun BhumiLedgerNavGraph(
@@ -62,6 +63,14 @@ fun BhumiLedgerNavGraph(
 
         composable("authority") {
             AuthorityVerificationScreen(
+                mainViewModel = mainViewModel,
+                navController = navController,
+                authViewModel = authViewModel
+            )
+        }
+
+        composable("blockchain") {
+            BlockchainViewerScreen(
                 mainViewModel = mainViewModel,
                 navController = navController,
                 authViewModel = authViewModel

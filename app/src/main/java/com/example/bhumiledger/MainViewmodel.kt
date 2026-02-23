@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.bhumiledger.domain.model.Block
 import com.example.bhumiledger.domain.model.UserRole
 import com.example.bhumiledger.domain.model.OwnershipClaim
 import com.example.bhumiledger.domain.result.DomainResult
@@ -19,6 +20,9 @@ class MainViewModel(
         private set
 
     var userClaims by mutableStateOf<List<OwnershipClaim>>(emptyList())
+        private set
+
+    var blockchain by mutableStateOf<List<Block>>(emptyList())
         private set
 
     var isChainValid by mutableStateOf(true)
@@ -44,6 +48,12 @@ class MainViewModel(
             if (result is DomainResult.Success) {
                 userClaims = result.data
             }
+        }
+    }
+
+    fun loadBlockchain() {
+        viewModelScope.launch {
+            blockchain = container.getAllBlocks()
         }
     }
 
