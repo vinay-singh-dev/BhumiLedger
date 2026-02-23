@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.bhumiledger.auth.toMessage
 import com.example.bhumiledger.domain.model.Block
 import com.example.bhumiledger.domain.model.UserRole
 import com.example.bhumiledger.domain.model.OwnershipClaim
@@ -77,7 +78,7 @@ class MainViewModel(
                 }
 
                 is DomainResult.Failure -> {
-                    status = result.error.toString()
+                    status = result.error.toMessage()
                 }
             }
         }
@@ -124,7 +125,7 @@ class MainViewModel(
 
                 is DomainResult.Failure -> {
 
-                    status = result.error.toString()
+                    status = result.error.toMessage()
 
                     Log.e("ROOM_TEST", status)
                 }
@@ -161,7 +162,7 @@ class MainViewModel(
 
                 is DomainResult.Failure -> {
 
-                    status = result.error.toString()
+                    status = result.error.toMessage()
 
                     Log.e("ROOM_TEST", status)
                 }
@@ -186,7 +187,7 @@ class MainViewModel(
                 }
 
                 is DomainResult.Failure -> {
-                    status = result.error.toString()
+                    status = result.error.toMessage()
                 }
             }
         }
@@ -220,7 +221,7 @@ class MainViewModel(
 
                 is DomainResult.Failure -> {
 
-                    status = result.error.toString()
+                    status = result.error.toMessage()
 
                     Log.e("ROOM_TEST", status)
                 }
@@ -253,7 +254,7 @@ class MainViewModel(
                 }
 
                 is DomainResult.Failure -> {
-                    status = result.error.toString()
+                    status = result.error.toMessage()
                 }
             }
         }
