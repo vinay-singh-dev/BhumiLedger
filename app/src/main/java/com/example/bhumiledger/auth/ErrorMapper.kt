@@ -13,6 +13,7 @@ fun DomainError.toMessage(): String {
         DomainError.UserAlreadyExists -> "User already exists"
         DomainError.InvalidCredentials -> "Invalid Credentials"
        DomainError.AlreadyCurrentOwner -> "Already current owner of this Land"
+        DomainError.BlockchainCorrupted -> "Blockchain is corrupted. Verification blocked."
 
     }
 }

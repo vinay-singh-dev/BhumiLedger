@@ -23,11 +23,9 @@ class VerifyOwnershipClaim(
         role: UserRole
     ): DomainResult<OwnershipClaim> {
 
-        // CRITICAL: Only authority can verify
+        // Only authority can verify
         if (role != UserRole.AUTHORITY) {
-            return DomainResult.Failure(
-                DomainError.UnauthorizedAccess
-            )
+            return DomainResult.Failure(DomainError.UnauthorizedAccess)
         }
 
         if (claimId.isBlank()) {
@@ -36,29 +34,28 @@ class VerifyOwnershipClaim(
 
         val claim =
             claimRepository.getClaimById(claimId)
-                ?: return DomainResult.Failure(
-                    DomainError.ClaimNotFound
-                )
+                ?: return DomainResult.Failure(DomainError.ClaimNotFound)
 
         if (claim.status != ClaimStatus.PENDING) {
-            return DomainResult.Failure(
-                DomainError.InvalidClaimState
-            )
+            return DomainResult.Failure(DomainError.InvalidClaimState)
         }
 
-        // Mark verified
-        val verifiedClaim =
-            claim.copy(
-                status = ClaimStatus.VERIFIED
-            )
+        // 🔥 CRITICAL: Validate blockchain BEFORE modifying anything
+        val isChainValid = blockchainRepository.validateChain()
+        if (!isChainValid) {
+            return DomainResult.Failure(DomainError.BlockchainCorrupted)
+        }
 
-        claimRepository.updateClaim(
-            verifiedClaim
+        // Now safe to proceed
+        val verifiedClaim = claim.copy(
+            status = ClaimStatus.VERIFIED
         )
+
+        claimRepository.updateClaim(verifiedClaim)
 
         val now = System.currentTimeMillis()
 
-        // Create registry entry automatically
+        // Create registry entry
         registryRepository.save(
             RegistryEntry(
                 parcelId = verifiedClaim.parcelId,
@@ -67,6 +64,7 @@ class VerifyOwnershipClaim(
             )
         )
 
+        // Create blockchain block
         val previousBlock = blockchainRepository.getLastBlock()
         val previousHash = previousBlock?.blockHash ?: "GENESIS"
 
@@ -77,7 +75,6 @@ class VerifyOwnershipClaim(
                     now
 
         val dataHash = sha256(dataString)
-
         val blockHash = sha256(previousHash + dataHash)
 
         val block = Block(
@@ -90,19 +87,6 @@ class VerifyOwnershipClaim(
 
         blockchainRepository.saveBlock(block)
 
-        val blocks = blockchainRepository.getAllBlocks()
-
-        println("===== FULL BLOCKCHAIN =====")
-        blocks.forEach {
-            println("Index: ${it.index}")
-            println("Previous: ${it.previousHash}")
-            println("Hash: ${it.blockHash}")
-            println("------")
-        }
-        println("===========================")
-
-        return DomainResult.Success(
-            verifiedClaim
-        )
+        return DomainResult.Success(verifiedClaim)
     }
 }

@@ -6,4 +6,5 @@ interface BlockchainRepository {
     suspend fun getLastBlock(): Block?
    suspend  fun saveBlock(block: Block)
     suspend fun getAllBlocks(): List<Block>
+    suspend fun validateChain(): Boolean
 }

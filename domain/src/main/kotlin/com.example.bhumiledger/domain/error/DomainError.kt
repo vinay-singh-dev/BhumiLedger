@@ -10,6 +10,7 @@ sealed class DomainError {
     object UserAlreadyExists:DomainError()
     object InvalidCredentials : DomainError()
     object AlreadyCurrentOwner:DomainError()
+    object BlockchainCorrupted:DomainError()
 
 
 }
