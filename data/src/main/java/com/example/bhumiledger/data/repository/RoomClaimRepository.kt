@@ -18,7 +18,8 @@ class RoomClaimRepository(
             parcelId = claim.parcelId,
             claimantId = claim.claimantId,
             status = claim.status.name,
-            createdAt = System.currentTimeMillis()
+            createdAt = System.currentTimeMillis(),
+            documentPath = claim.documentPath
         )
 
         dao.insert(entity)
@@ -33,7 +34,8 @@ class RoomClaimRepository(
                 id = it.claimId,
                 parcelId = it.parcelId,
                 claimantId = it.claimantId,
-                status = ClaimStatus.valueOf(it.status)
+                status = ClaimStatus.valueOf(it.status),
+                documentPath = it.documentPath
             )
         }
     }
@@ -47,7 +49,8 @@ class RoomClaimRepository(
                 id = it.claimId,
                 parcelId = it.parcelId,
                 claimantId = it.claimantId,
-                status = ClaimStatus.valueOf(it.status)
+                status = ClaimStatus.valueOf(it.status),
+                documentPath = it.documentPath
             )
         }
     }
@@ -58,7 +61,8 @@ class RoomClaimRepository(
             ?: return
 
         val updated = existing.copy(
-            status = claim.status.name
+            status = claim.status.name,
+            documentPath = claim.documentPath
         )
 
         dao.update(updated)
@@ -70,7 +74,8 @@ class RoomClaimRepository(
                 id = it.claimId,
                 parcelId = it.parcelId,
                 claimantId = it.claimantId,
-                status = ClaimStatus.valueOf(it.status)
+                status = ClaimStatus.valueOf(it.status),
+                documentPath = it.documentPath
             )
         }
     }
@@ -81,7 +86,8 @@ class RoomClaimRepository(
                 id = it.claimId,
                 parcelId = it.parcelId,
                 claimantId = it.claimantId,
-                status = ClaimStatus.valueOf(it.status)
+                status = ClaimStatus.valueOf(it.status),
+                documentPath = it.documentPath
             )
         }
     }

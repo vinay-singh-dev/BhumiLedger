@@ -96,7 +96,7 @@ class MainViewModel(
         }
     }
 
-    fun submitClaim(parcelId: String, claimantId: String) {
+    fun submitClaim(parcelId: String, claimantId: String,documentPath: String?) {
 
         viewModelScope.launch {
 
@@ -105,7 +105,8 @@ class MainViewModel(
             val result =
                 container.submitOwnershipClaim(
                     parcelId,
-                    claimantId
+                    claimantId,
+                    documentPath
                 )
 
             when (result) {
@@ -246,7 +247,8 @@ class MainViewModel(
                             id = claim.id,
                             parcelId = claim.parcelId,
                             claimantName = user?.name ?: "Unknown",
-                            status = claim.status
+                            status = claim.status,
+                            documentPath = claim.documentPath
                         )
                     }
 

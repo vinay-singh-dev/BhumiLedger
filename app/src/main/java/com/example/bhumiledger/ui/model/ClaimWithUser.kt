@@ -6,5 +6,6 @@ data class ClaimWithUser(
     val id: String,
     val parcelId: String,
     val claimantName: String,
-    val status: ClaimStatus
+    val status: ClaimStatus,
+    val documentPath:String?
 )

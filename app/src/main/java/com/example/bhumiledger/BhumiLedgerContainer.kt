@@ -93,9 +93,10 @@ class BhumiLedgerContainer(context: Context) {
 
     suspend fun submitOwnershipClaim(
         parcelId: String,
-        claimantId: String
+        claimantId: String,
+        documentPath:String?
     ) =
-        submitOwnershipClaimUseCase(parcelId, claimantId)
+        submitOwnershipClaimUseCase(parcelId, claimantId,documentPath)
 
     suspend fun getPendingClaims() =
         getPendingClaimsUseCase()

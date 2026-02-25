@@ -15,6 +15,8 @@ data class ClaimEntity(
     val parcelId: String,
     val claimantId: String,
     val status: String,
-    val createdAt: Long
+    val createdAt: Long,
+
+    val documentPath: String? = null
 )
 

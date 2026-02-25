@@ -10,10 +10,12 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.bhumiledger.MainViewModel
 import com.example.bhumiledger.auth.AuthViewModel
+import utils.openPdf
 
 @Composable
 fun AuthorityVerificationScreen(
@@ -22,7 +24,8 @@ fun AuthorityVerificationScreen(
     authViewModel: AuthViewModel
 ) {
 
-    // 🔥 Load pending claims when screen opens
+    val context = LocalContext.current
+
     LaunchedEffect(Unit) {
         mainViewModel.loadPendingClaims()
     }
@@ -35,7 +38,7 @@ fun AuthorityVerificationScreen(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(30.dp),
+                .padding(20.dp),
             horizontalArrangement = Arrangement.End
         ) {
             ElevatedButton(
@@ -61,7 +64,7 @@ fun AuthorityVerificationScreen(
         Column(
             modifier = Modifier
                 .align(Alignment.Center)
-                .fillMaxWidth(0.9f),
+                .fillMaxWidth(0.92f),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
 
@@ -81,42 +84,69 @@ fun AuthorityVerificationScreen(
                             .fillMaxWidth()
                             .padding(vertical = 6.dp)
                     ) {
+
                         Column(
-                            modifier = Modifier.padding(12.dp)
+                            modifier = Modifier.padding(14.dp)
                         ) {
 
                             Text(
                                 text = "Parcel: ${claim.parcelId}",
                                 modifier = Modifier.clickable {
-                                    navController.navigate("parcel_history/${claim.parcelId}")
+                                    navController.navigate(
+                                        "parcel_history/${claim.parcelId}"
+                                    )
                                 }
                             )
+
                             Text("Claimant: ${claim.claimantName}")
                             Text("Status: ${claim.status}")
 
-                            Spacer(modifier = Modifier.height(8.dp))
+                            Spacer(modifier = Modifier.height(10.dp))
 
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            // ✅ Authority Actions
+                            Column(
+                                verticalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
 
-                                Button(
-                                    onClick = {
-                                        mainViewModel.verifyClaim(claim.id)
-                                    },
-                                    modifier = Modifier.weight(1f)
+                                Row(
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
                                 ) {
-                                    Text("Verify")
+
+                                    Button(
+                                        onClick = {
+                                            mainViewModel.verifyClaim(claim.id)
+                                        },
+                                        modifier = Modifier.weight(1f)
+                                    ) {
+                                        Text("Verify")
+                                    }
+
+                                    Button(
+                                        onClick = {
+                                            mainViewModel.rejectClaim(claim.id)
+                                        },
+                                        modifier = Modifier.weight(1f)
+                                    ) {
+                                        Text("Reject")
+                                    }
                                 }
 
-                                Button(
+                                // ✅ Document Button (Safe)
+                                OutlinedButton(
                                     onClick = {
-                                        mainViewModel.rejectClaim(claim.id)
+                                        claim.documentPath?.let {
+                                            openPdf(context, it)
+                                        }
                                     },
-                                    modifier = Modifier.weight(1f)
+                                    modifier = Modifier.fillMaxWidth(),
+                                    enabled = claim.documentPath != null
                                 ) {
-                                    Text("Reject")
+                                    Text(
+                                        if (claim.documentPath != null)
+                                            "View Document"
+                                        else
+                                            "No Document Uploaded"
+                                    )
                                 }
                             }
                         }
@@ -124,7 +154,7 @@ fun AuthorityVerificationScreen(
                 }
             }
 
-            // 👇 GLOBAL BLOCKCHAIN CONTROLS
+            // Blockchain Controls
 
             Button(
                 onClick = { mainViewModel.validateChain() },
@@ -138,7 +168,9 @@ fun AuthorityVerificationScreen(
             Text("Status: ${mainViewModel.status}")
 
             Button(
-                onClick = { navController.navigate("blockchain") },
+                onClick = {
+                    navController.navigate("blockchain")
+                },
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("View Blockchain")

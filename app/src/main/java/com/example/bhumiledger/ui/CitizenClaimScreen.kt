@@ -1,5 +1,6 @@
 package com.example.bhumiledger.ui
-
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -9,11 +10,13 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.bhumiledger.MainViewModel
 import com.example.bhumiledger.auth.AuthViewModel
 import com.example.bhumiledger.domain.model.ClaimStatus
+import utils.FileUtils
 
 @Composable
 fun CitizenClaimScreen(
@@ -21,6 +24,27 @@ fun CitizenClaimScreen(
     navController: NavController,
     authViewModel: AuthViewModel
 ) {
+
+    val context = LocalContext.current
+
+    var selectedDocumentPath by remember {
+        mutableStateOf<String?>(null)
+    }
+
+    val documentLauncher =
+        rememberLauncherForActivityResult(
+            ActivityResultContracts.OpenDocument()
+        ) { uri ->
+
+            uri?.let {
+                val file = FileUtils.copyPdfToAppStorage(
+                    context,
+                    it
+                )
+
+                selectedDocumentPath = file.absolutePath
+            }
+        }
 
     var parcelId by remember { mutableStateOf("") }
 
@@ -88,10 +112,20 @@ fun CitizenClaimScreen(
 
             Button(
                 onClick = {
+                    documentLauncher.launch(
+                        arrayOf("application/pdf")
+                    )
+                }
+            ) {
+                Text("Upload Land Document (PDF)")
+            }
+
+            Button(
+                onClick = {
                     val userId = authViewModel.getCurrentUserId()
 
                     if (userId != null) {
-                        mainViewModel.submitClaim(parcelId, userId)
+                        mainViewModel.submitClaim(parcelId, userId,selectedDocumentPath)
                     }
                 },
                 modifier = Modifier.fillMaxWidth()
