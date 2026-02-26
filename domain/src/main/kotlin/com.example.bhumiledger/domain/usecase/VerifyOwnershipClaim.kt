@@ -20,51 +20,53 @@ class VerifyOwnershipClaim(
 
     suspend operator fun invoke(
         claimId: String,
+        authorityId: String,
         role: UserRole
     ): DomainResult<OwnershipClaim> {
 
-        // Only authority can verify
         if (role != UserRole.AUTHORITY) {
             return DomainResult.Failure(DomainError.UnauthorizedAccess)
         }
 
-        if (claimId.isBlank()) {
+        if (claimId.isBlank() || authorityId.isBlank()) {
             return DomainResult.Failure(DomainError.InvalidInput)
         }
 
-        val claim =
-            claimRepository.getClaimById(claimId)
-                ?: return DomainResult.Failure(DomainError.ClaimNotFound)
+        val claim = claimRepository.getClaimById(claimId)
+            ?: return DomainResult.Failure(DomainError.ClaimNotFound)
 
         if (claim.status != ClaimStatus.PENDING) {
             return DomainResult.Failure(DomainError.InvalidClaimState)
         }
 
-        // 🔥 CRITICAL: Validate blockchain BEFORE modifying anything
-        val isChainValid = blockchainRepository.validateChain()
-        if (!isChainValid) {
+        // 🚫 Prevent self approval
+        if (claim.claimantId == authorityId) {
+            return DomainResult.Failure(DomainError.SelfApprovalNotAllowed)
+        }
+
+        // 🔥 Validate blockchain BEFORE any modification
+        if (!blockchainRepository.validateChain()) {
             return DomainResult.Failure(DomainError.BlockchainCorrupted)
         }
 
-        // Now safe to proceed
+        val now = System.currentTimeMillis()
+
         val verifiedClaim = claim.copy(
             status = ClaimStatus.VERIFIED
         )
 
         claimRepository.updateClaim(verifiedClaim)
 
-        val now = System.currentTimeMillis()
-
-        // Create registry entry
         registryRepository.save(
             RegistryEntry(
                 parcelId = verifiedClaim.parcelId,
                 ownerId = verifiedClaim.claimantId,
-                createdAt = now
+                createdAt = now,
+                verifiedByAuthorityId = authorityId,
+                verifiedAt = now
             )
         )
 
-        // Create blockchain block
         val previousBlock = blockchainRepository.getLastBlock()
         val previousHash = previousBlock?.blockHash ?: "GENESIS"
 
@@ -72,6 +74,7 @@ class VerifyOwnershipClaim(
             verifiedClaim.id +
                     verifiedClaim.parcelId +
                     verifiedClaim.claimantId +
+                    authorityId +
                     now
 
         val dataHash = sha256(dataString)

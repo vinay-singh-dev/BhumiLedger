@@ -10,27 +10,32 @@ import com.example.bhumiledger.domain.result.DomainResult
 class CreateRegistryEntry(
     private val registryRepository: RegistryRepository
 ) {
-    suspend operator fun invoke(claim: OwnershipClaim): DomainResult<RegistryEntry> {
-
+    suspend operator fun invoke(
+        claim: OwnershipClaim,
+        authorityId: String
+    ): DomainResult<RegistryEntry> {
 
         if (claim.status != ClaimStatus.VERIFIED) {
             return DomainResult.Failure(DomainError.InvalidClaimState)
         }
 
-        if(registryRepository.getByParcelId(claim.parcelId) != null)
+        if (registryRepository.getByParcelId(claim.parcelId) != null) {
             return DomainResult.Failure(DomainError.OwnershipAlreadyExists)
+        }
+
+        val now = System.currentTimeMillis()
 
         val entry = RegistryEntry(
             parcelId = claim.parcelId,
             ownerId = claim.claimantId,
-            createdAt = System.currentTimeMillis()
+            createdAt = now,
+            verifiedByAuthorityId = authorityId,
+            verifiedAt = now
         )
-
 
         registryRepository.save(entry)
 
         return DomainResult.Success(entry)
-
     }
 }
 

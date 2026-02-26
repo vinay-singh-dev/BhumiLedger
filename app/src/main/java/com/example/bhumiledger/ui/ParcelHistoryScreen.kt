@@ -18,6 +18,14 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.bhumiledger.MainViewModel
 
+private fun formatDate(time: Long): String {
+    val formatter = java.text.SimpleDateFormat(
+        "dd MMM yyyy HH:mm",
+        java.util.Locale.getDefault()
+    )
+    return formatter.format(java.util.Date(time))
+}
+
 @Composable
 fun ParcelHistoryScreen(
     parcelId: String,
@@ -56,7 +64,12 @@ fun ParcelHistoryScreen(
                     ) {
 
                         Text("Owner: ${entry.ownerName}")
-                        Text("Timestamp: ${entry.timestamp}")
+                        Text("Verified By: ${entry.authorityName}")
+
+                        Spacer(modifier = Modifier.height(4.dp))
+
+                        Text("Ownership Created At: ${formatDate(entry.timestamp)}")
+                        Text("Verified At: ${formatDate(entry.verifiedAt)}")
                     }
                 }
             }

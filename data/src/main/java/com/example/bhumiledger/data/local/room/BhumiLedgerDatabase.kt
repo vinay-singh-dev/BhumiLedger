@@ -10,7 +10,7 @@ import androidx.room.RoomDatabase
         UserEntity::class,
         BlockEntity::class
     ],
-    version = 3,   // 👈 bump version
+    version = 4,   // 👈 bump version
     exportSchema = false
 )
 abstract class BhumiLedgerDatabase : RoomDatabase() {
