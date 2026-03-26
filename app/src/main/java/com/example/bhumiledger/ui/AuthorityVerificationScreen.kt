@@ -4,8 +4,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -17,6 +15,7 @@ import com.example.bhumiledger.MainViewModel
 import com.example.bhumiledger.auth.AuthViewModel
 import utils.openPdf
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AuthorityVerificationScreen(
     mainViewModel: MainViewModel,
@@ -30,67 +29,71 @@ fun AuthorityVerificationScreen(
         mainViewModel.loadPendingClaims()
     }
 
-    Box(
-        modifier = Modifier.fillMaxSize()
-    ) {
-
-        // Logout Button
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(20.dp),
-            horizontalArrangement = Arrangement.End
-        ) {
-            ElevatedButton(
-                onClick = {
-                    authViewModel.logout()
-                    navController.navigate("login") {
-                        popUpTo(navController.graph.startDestinationId) {
-                            inclusive = true
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Authority Dashboard") },
+                actions = {
+                    TextButton(
+                        onClick = {
+                            authViewModel.logout()
+                            navController.navigate("login") {
+                                popUpTo(0) { inclusive = true }
+                            }
                         }
-                        launchSingleTop = true
+                    ) {
+                        Text("Logout")
                     }
                 }
-            ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ExitToApp,
-                    contentDescription = "Logout"
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text("Logout")
-            }
+            )
         }
+    ) { paddingValues ->
 
         Column(
             modifier = Modifier
-                .align(Alignment.Center)
-                .fillMaxWidth(0.92f),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+                .padding(paddingValues)
+                .padding(horizontal = 20.dp, vertical = 16.dp)
+                .fillMaxSize()
         ) {
+
+            // ----------------------------
+            // Pending Claims Section
+            // ----------------------------
 
             Text(
                 text = "Pending Claims",
-                style = MaterialTheme.typography.headlineMedium
+                style = MaterialTheme.typography.titleLarge
             )
 
+            Spacer(modifier = Modifier.height(12.dp))
+
             LazyColumn(
-                modifier = Modifier.weight(1f, fill = false)
+                verticalArrangement = Arrangement.spacedBy(14.dp),
+                modifier = Modifier.weight(1f)
             ) {
 
                 items(mainViewModel.pendingClaims) { claim ->
 
                     Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 6.dp)
+                        shape = MaterialTheme.shapes.large,
+                        elevation = CardDefaults.cardElevation(8.dp),
+                        modifier = Modifier.fillMaxWidth()
                     ) {
 
                         Column(
-                            modifier = Modifier.padding(14.dp)
+                            modifier = Modifier
+                                .padding(16.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
 
                             Text(
-                                text = "Parcel: ${claim.parcelId}",
+                                text = "Parcel ID",
+                                style = MaterialTheme.typography.labelMedium
+                            )
+
+                            Text(
+                                text = claim.parcelId,
+                                style = MaterialTheme.typography.titleMedium,
                                 modifier = Modifier.clickable {
                                     navController.navigate(
                                         "parcel_history/${claim.parcelId}"
@@ -98,40 +101,21 @@ fun AuthorityVerificationScreen(
                                 }
                             )
 
-                            Text("Claimant: ${claim.claimantName}")
-                            Text("Status: ${claim.status}")
+                            Divider()
 
-                            Spacer(modifier = Modifier.height(10.dp))
+                            Text(
+                                text = "Claimant: ${claim.claimantName}",
+                                style = MaterialTheme.typography.bodyMedium
+                            )
 
-                            // ✅ Authority Actions
+                            Spacer(modifier = Modifier.height(6.dp))
+
+                            // ACTIONS
+
                             Column(
                                 verticalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
 
-                                Row(
-                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                                ) {
-
-                                    Button(
-                                        onClick = {
-                                            mainViewModel.verifyClaim(claim.id)
-                                        },
-                                        modifier = Modifier.weight(1f)
-                                    ) {
-                                        Text("Verify")
-                                    }
-
-                                    Button(
-                                        onClick = {
-                                            mainViewModel.rejectClaim(claim.id)
-                                        },
-                                        modifier = Modifier.weight(1f)
-                                    ) {
-                                        Text("Reject")
-                                    }
-                                }
-
-                                // ✅ Document Button (Safe)
                                 OutlinedButton(
                                     onClick = {
                                         claim.documentPath?.let {
@@ -143,10 +127,34 @@ fun AuthorityVerificationScreen(
                                 ) {
                                     Text(
                                         if (claim.documentPath != null)
-                                            "View Document"
+                                            "View Uploaded Document"
                                         else
                                             "No Document Uploaded"
                                     )
+                                }
+
+                                Row(
+                                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+
+                                    Button(
+                                        onClick = {
+                                            mainViewModel.verifyClaim(claim.id)
+                                        },
+                                        modifier = Modifier.weight(1f)
+                                    ) {
+                                        Text("Approve")
+                                    }
+
+                                    OutlinedButton(
+                                        onClick = {
+                                            mainViewModel.rejectClaim(claim.id)
+                                        },
+                                        modifier = Modifier.weight(1f)
+                                    ) {
+                                        Text("Reject")
+                                    }
                                 }
                             }
                         }
@@ -154,26 +162,66 @@ fun AuthorityVerificationScreen(
                 }
             }
 
-            // Blockchain Controls
+            Spacer(modifier = Modifier.height(20.dp))
+
+            // ----------------------------
+            // Blockchain Integrity Section
+            // ----------------------------
+
+            Text(
+                text = "Blockchain Integrity",
+                style = MaterialTheme.typography.titleLarge
+            )
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            val chainColor =
+                if (mainViewModel.isChainValid)
+                    MaterialTheme.colorScheme.primary
+                else
+                    MaterialTheme.colorScheme.error
+
+            Surface(
+                color = chainColor.copy(alpha = 0.15f),
+                shape = MaterialTheme.shapes.medium,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text =
+                        if (mainViewModel.isChainValid)
+                            "Blockchain Verified and Secure"
+                        else
+                            "Warning: Blockchain Integrity Compromised",
+                    color = chainColor,
+                    modifier = Modifier.padding(14.dp)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
 
             Button(
                 onClick = { mainViewModel.validateChain() },
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Validate Blockchain")
+                Text("Revalidate Blockchain")
             }
 
-            Text("Chain Valid: ${mainViewModel.isChainValid}")
+            Spacer(modifier = Modifier.height(8.dp))
 
-            Text("Status: ${mainViewModel.status}")
+            Text(
+                text = mainViewModel.status,
+                style = MaterialTheme.typography.bodySmall
+            )
 
-            Button(
+            Spacer(modifier = Modifier.height(12.dp))
+
+            OutlinedButton(
                 onClick = {
                     navController.navigate("blockchain")
                 },
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("View Blockchain")
+                Text("View Full Blockchain")
             }
         }
     }

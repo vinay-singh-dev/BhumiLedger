@@ -24,6 +24,7 @@ class AuthViewModel(
         sessionManager.clearSession()
         _authState.value = AuthState.Idle
     }
+
     fun getCurrentUserId(): String? {
         return sessionManager.getUserId()
     }
@@ -31,7 +32,6 @@ class AuthViewModel(
     fun getCurrentUserRole(): UserRole? {
         return sessionManager.getUserRole()
     }
-
 
 
     fun register(
@@ -71,7 +71,6 @@ class AuthViewModel(
     }
 
 
-
     fun login(email: String, passwordHash: String) {
         viewModelScope.launch {
             _authState.value = AuthState.Loading
@@ -91,4 +90,4 @@ class AuthViewModel(
             }
         }
     }
-    }
+}
