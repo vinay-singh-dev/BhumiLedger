@@ -11,6 +11,7 @@ sealed class DomainError {
     object InvalidCredentials : DomainError()
     object AlreadyCurrentOwner:DomainError()
     object BlockchainCorrupted:DomainError()
+    object SelfApprovalNotAllowed:DomainError()
 
 
 }

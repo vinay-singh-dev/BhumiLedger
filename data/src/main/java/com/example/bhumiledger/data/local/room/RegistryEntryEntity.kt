@@ -12,7 +12,10 @@ data class RegistryEntryEntity (
     val id:Long = 0,
     val parcelId:String,
     val ownerId:String,
-    val createdAt: Long
+    val createdAt: Long,
+
+    val verifiedByAuthorityId: String,
+    val verifiedAt: Long
 
 )
 
@@ -21,7 +24,9 @@ fun RegistryEntryEntity.toDomain(): RegistryEntry {
     return RegistryEntry(
         parcelId = parcelId,
         ownerId = ownerId,
-        createdAt = createdAt
+        createdAt = createdAt,
+        verifiedByAuthorityId = verifiedByAuthorityId,
+        verifiedAt = verifiedAt
     )
 }
 
@@ -30,7 +35,9 @@ fun RegistryEntry.toEntity():RegistryEntryEntity {
         id = 0,
         parcelId = parcelId,
         ownerId = ownerId,
-        createdAt = createdAt
+        createdAt = createdAt,
+        verifiedByAuthorityId = verifiedByAuthorityId,
+        verifiedAt = verifiedAt
     )
 
 }

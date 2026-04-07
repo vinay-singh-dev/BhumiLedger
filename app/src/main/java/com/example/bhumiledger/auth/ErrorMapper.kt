@@ -14,6 +14,6 @@ fun DomainError.toMessage(): String {
         DomainError.InvalidCredentials -> "Invalid Credentials"
        DomainError.AlreadyCurrentOwner -> "Already current owner of this Land"
         DomainError.BlockchainCorrupted -> "Blockchain is corrupted. Verification blocked."
-
+        DomainError.SelfApprovalNotAllowed -> "Self approval not allowed"
     }
 }

@@ -4,17 +4,18 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.bhumiledger.MainViewModel
 import com.example.bhumiledger.auth.AuthViewModel
+import utils.openPdf
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AuthorityVerificationScreen(
     mainViewModel: MainViewModel,
@@ -22,101 +23,138 @@ fun AuthorityVerificationScreen(
     authViewModel: AuthViewModel
 ) {
 
-    // 🔥 Load pending claims when screen opens
+    val context = LocalContext.current
+
     LaunchedEffect(Unit) {
         mainViewModel.loadPendingClaims()
     }
 
-    Box(
-        modifier = Modifier.fillMaxSize()
-    ) {
-
-        // Logout Button
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(30.dp),
-            horizontalArrangement = Arrangement.End
-        ) {
-            ElevatedButton(
-                onClick = {
-                    authViewModel.logout()
-                    navController.navigate("login") {
-                        popUpTo(navController.graph.startDestinationId) {
-                            inclusive = true
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Authority Dashboard") },
+                actions = {
+                    TextButton(
+                        onClick = {
+                            authViewModel.logout()
+                            navController.navigate("login") {
+                                popUpTo(0) { inclusive = true }
+                            }
                         }
-                        launchSingleTop = true
+                    ) {
+                        Text("Logout")
                     }
                 }
-            ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ExitToApp,
-                    contentDescription = "Logout"
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text("Logout")
-            }
+            )
         }
+    ) { paddingValues ->
 
         Column(
             modifier = Modifier
-                .align(Alignment.Center)
-                .fillMaxWidth(0.9f),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+                .padding(paddingValues)
+                .padding(horizontal = 20.dp, vertical = 16.dp)
+                .fillMaxSize()
         ) {
+
+            // ----------------------------
+            // Pending Claims Section
+            // ----------------------------
 
             Text(
                 text = "Pending Claims",
-                style = MaterialTheme.typography.headlineMedium
+                style = MaterialTheme.typography.titleLarge
             )
 
+            Spacer(modifier = Modifier.height(12.dp))
+
             LazyColumn(
-                modifier = Modifier.weight(1f, fill = false)
+                verticalArrangement = Arrangement.spacedBy(14.dp),
+                modifier = Modifier.weight(1f)
             ) {
 
                 items(mainViewModel.pendingClaims) { claim ->
 
                     Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 6.dp)
+                        shape = MaterialTheme.shapes.large,
+                        elevation = CardDefaults.cardElevation(8.dp),
+                        modifier = Modifier.fillMaxWidth()
                     ) {
+
                         Column(
-                            modifier = Modifier.padding(12.dp)
+                            modifier = Modifier
+                                .padding(16.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
 
                             Text(
-                                text = "Parcel: ${claim.parcelId}",
+                                text = "Parcel ID",
+                                style = MaterialTheme.typography.labelMedium
+                            )
+
+                            Text(
+                                text = claim.parcelId,
+                                style = MaterialTheme.typography.titleMedium,
                                 modifier = Modifier.clickable {
-                                    navController.navigate("parcel_history/${claim.parcelId}")
+                                    navController.navigate(
+                                        "parcel_history/${claim.parcelId}"
+                                    )
                                 }
                             )
-                            Text("Claimant: ${claim.claimantName}")
-                            Text("Status: ${claim.status}")
 
-                            Spacer(modifier = Modifier.height(8.dp))
+                            Divider()
 
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            Text(
+                                text = "Claimant: ${claim.claimantName}",
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+
+                            Spacer(modifier = Modifier.height(6.dp))
+
+                            // ACTIONS
+
+                            Column(
+                                verticalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
 
-                                Button(
+                                OutlinedButton(
                                     onClick = {
-                                        mainViewModel.verifyClaim(claim.id)
+                                        claim.documentPath?.let {
+                                            openPdf(context, it)
+                                        }
                                     },
-                                    modifier = Modifier.weight(1f)
+                                    modifier = Modifier.fillMaxWidth(),
+                                    enabled = claim.documentPath != null
                                 ) {
-                                    Text("Verify")
+                                    Text(
+                                        if (claim.documentPath != null)
+                                            "View Uploaded Document"
+                                        else
+                                            "No Document Uploaded"
+                                    )
                                 }
 
-                                Button(
-                                    onClick = {
-                                        mainViewModel.rejectClaim(claim.id)
-                                    },
-                                    modifier = Modifier.weight(1f)
+                                Row(
+                                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                                    modifier = Modifier.fillMaxWidth()
                                 ) {
-                                    Text("Reject")
+
+                                    Button(
+                                        onClick = {
+                                            mainViewModel.verifyClaim(claim.id)
+                                        },
+                                        modifier = Modifier.weight(1f)
+                                    ) {
+                                        Text("Approve")
+                                    }
+
+                                    OutlinedButton(
+                                        onClick = {
+                                            mainViewModel.rejectClaim(claim.id)
+                                        },
+                                        modifier = Modifier.weight(1f)
+                                    ) {
+                                        Text("Reject")
+                                    }
                                 }
                             }
                         }
@@ -124,24 +162,66 @@ fun AuthorityVerificationScreen(
                 }
             }
 
-            // 👇 GLOBAL BLOCKCHAIN CONTROLS
+            Spacer(modifier = Modifier.height(20.dp))
+
+            // ----------------------------
+            // Blockchain Integrity Section
+            // ----------------------------
+
+            Text(
+                text = "Blockchain Integrity",
+                style = MaterialTheme.typography.titleLarge
+            )
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            val chainColor =
+                if (mainViewModel.isChainValid)
+                    MaterialTheme.colorScheme.primary
+                else
+                    MaterialTheme.colorScheme.error
+
+            Surface(
+                color = chainColor.copy(alpha = 0.15f),
+                shape = MaterialTheme.shapes.medium,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text =
+                        if (mainViewModel.isChainValid)
+                            "Blockchain Verified and Secure"
+                        else
+                            "Warning: Blockchain Integrity Compromised",
+                    color = chainColor,
+                    modifier = Modifier.padding(14.dp)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
 
             Button(
                 onClick = { mainViewModel.validateChain() },
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Validate Blockchain")
+                Text("Revalidate Blockchain")
             }
 
-            Text("Chain Valid: ${mainViewModel.isChainValid}")
+            Spacer(modifier = Modifier.height(8.dp))
 
-            Text("Status: ${mainViewModel.status}")
+            Text(
+                text = mainViewModel.status,
+                style = MaterialTheme.typography.bodySmall
+            )
 
-            Button(
-                onClick = { navController.navigate("blockchain") },
+            Spacer(modifier = Modifier.height(12.dp))
+
+            OutlinedButton(
+                onClick = {
+                    navController.navigate("blockchain")
+                },
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("View Blockchain")
+                Text("View Full Blockchain")
             }
         }
     }

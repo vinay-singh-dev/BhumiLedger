@@ -66,11 +66,14 @@ class MainViewModel(
 
                     val mapped = result.data.map { entry ->
 
-                        val user = container.getUserById(entry.ownerId)
+                        val owner = container.getUserById(entry.ownerId)
+                        val authority = container.getUserById(entry.verifiedByAuthorityId)
 
                         RegistryEntryWithUser(
-                            ownerName = user?.name ?: "Unknown",
-                            timestamp = entry.createdAt
+                            ownerName = owner?.name ?: "Unknown",
+                            authorityName = authority?.name ?: "Unknown",
+                            timestamp = entry.createdAt,
+                            verifiedAt = entry.verifiedAt
                         )
                     }
 
@@ -96,7 +99,7 @@ class MainViewModel(
         }
     }
 
-    fun submitClaim(parcelId: String, claimantId: String) {
+    fun submitClaim(parcelId: String, claimantId: String,documentPath: String?) {
 
         viewModelScope.launch {
 
@@ -105,7 +108,8 @@ class MainViewModel(
             val result =
                 container.submitOwnershipClaim(
                     parcelId,
-                    claimantId
+                    claimantId,
+                    documentPath
                 )
 
             when (result) {
@@ -138,10 +142,7 @@ class MainViewModel(
     // AUTHORITY ACTION
     // ===============================
     fun verifyClaim(claimId: String) {
-
         viewModelScope.launch {
-
-            Log.d("ROOM_TEST", "Authority verifying claim")
 
             val result =
                 container.verifyOwnershipClaim(
@@ -152,19 +153,12 @@ class MainViewModel(
             when (result) {
 
                 is DomainResult.Success -> {
-
                     status = "Claim VERIFIED"
-
                     loadPendingClaims()
-
-                    Log.d("ROOM_TEST", status)
                 }
 
                 is DomainResult.Failure -> {
-
                     status = result.error.toMessage()
-
-                    Log.e("ROOM_TEST", status)
                 }
             }
         }
@@ -246,7 +240,8 @@ class MainViewModel(
                             id = claim.id,
                             parcelId = claim.parcelId,
                             claimantName = user?.name ?: "Unknown",
-                            status = claim.status
+                            status = claim.status,
+                            documentPath = claim.documentPath
                         )
                     }
 

@@ -6,8 +6,11 @@ import com.example.bhumiledger.data.repository.RoomAuthRepository
 import com.example.bhumiledger.data.repository.RoomBlockchainRepository
 import com.example.bhumiledger.data.repository.RoomClaimRepository
 import com.example.bhumiledger.data.repository.RoomRegistryRepository
+import com.example.bhumiledger.domain.error.DomainError
 import com.example.bhumiledger.domain.model.OwnershipClaim
+import com.example.bhumiledger.domain.model.RegistryEntry
 import com.example.bhumiledger.domain.model.UserRole
+import com.example.bhumiledger.domain.result.DomainResult
 import com.example.bhumiledger.domain.usecase.CreateRegistryEntry
 import com.example.bhumiledger.domain.usecase.GetClaimsByUserUseCase
 import com.example.bhumiledger.domain.usecase.GetOwnershipHistory
@@ -93,9 +96,10 @@ class BhumiLedgerContainer(context: Context) {
 
     suspend fun submitOwnershipClaim(
         parcelId: String,
-        claimantId: String
+        claimantId: String,
+        documentPath:String?
     ) =
-        submitOwnershipClaimUseCase(parcelId, claimantId)
+        submitOwnershipClaimUseCase(parcelId, claimantId,documentPath)
 
     suspend fun getPendingClaims() =
         getPendingClaimsUseCase()
@@ -107,13 +111,30 @@ class BhumiLedgerContainer(context: Context) {
     suspend fun verifyOwnershipClaim(
         claimId: String,
         role: UserRole
-    ) =
-        verifyOwnershipClaimUseCase(claimId, role)
+    ): DomainResult<OwnershipClaim> {
+
+        val authorityId = getCurrentUserId()
+            ?: return DomainResult.Failure(DomainError.UnauthorizedAccess)
+
+        return verifyOwnershipClaimUseCase(
+            claimId,
+            authorityId,
+            role
+        )
+    }
 
     suspend fun createRegistryEntry(
         claim: OwnershipClaim
-    ) =
-        createRegistryEntryUseCase(claim)
+    ): DomainResult<RegistryEntry> {
+
+        val authorityId = getCurrentUserId()
+            ?: return DomainResult.Failure(DomainError.UnauthorizedAccess)
+
+        return createRegistryEntryUseCase(
+            claim,
+            authorityId
+        )
+    }
 
     suspend fun getOwnershipHistory(
         parcelId: String
@@ -130,6 +151,10 @@ class BhumiLedgerContainer(context: Context) {
 
     suspend fun getAllBlocks() =
         blockchainRepository.getAllBlocks()
+
+    fun getCurrentUserId(): String? {
+        return sessionManager.getUserId()
+    }
 
     suspend fun getUserById(userId: String) =
         authRepository.getUserById(userId)

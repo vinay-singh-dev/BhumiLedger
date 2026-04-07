@@ -15,7 +15,8 @@ class SubmitOwnershipClaim(
 
     suspend operator fun invoke(
         parcelId: String,
-        claimantId: String
+        claimantId: String,
+        documentPath:String?
     ): DomainResult<OwnershipClaim> {
 
         if (parcelId.isBlank() || claimantId.isBlank()) {
@@ -46,7 +47,8 @@ class SubmitOwnershipClaim(
             id = UUID.randomUUID().toString(),
             parcelId = parcelId,
             claimantId = claimantId,
-            status = ClaimStatus.PENDING
+            status = ClaimStatus.PENDING,
+            documentPath = documentPath
         )
 
         claimRepository.saveClaim(claim)
