@@ -1,10 +1,13 @@
 package com.example.bhumiledger.auth
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -71,6 +74,7 @@ fun LoginScreen(
                 onClick = {
                     authViewModel.login(email, password)
                 },
+                enabled = state !is AuthState.Loading,
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Login")
@@ -90,6 +94,20 @@ fun LoginScreen(
                     color = MaterialTheme.colorScheme.error
                 )
             }
+
+            }
+        }
+
+    if (state is AuthState.Loading) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black.copy(alpha = 0.3f))
+            .clickable(enabled = true) {},
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator()
         }
     }
-}
+    }
+
