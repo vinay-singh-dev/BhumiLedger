@@ -12,6 +12,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.bhumiledger.MainViewModel
+import com.example.bhumiledger.auth.AuthState
 import com.example.bhumiledger.auth.AuthViewModel
 import utils.openPdf
 
@@ -24,9 +25,18 @@ fun AuthorityVerificationScreen(
 ) {
 
     val context = LocalContext.current
+    val state by authViewModel.authState.collectAsState()
 
     LaunchedEffect(Unit) {
         mainViewModel.loadPendingClaims()
+    }
+
+    LaunchedEffect(state is AuthState.LoggedOut) {
+        if (state is AuthState.LoggedOut) {
+            navController.navigate("login") {
+                popUpTo(0) { inclusive = true }
+            }
+        }
     }
 
     Scaffold(
@@ -37,9 +47,7 @@ fun AuthorityVerificationScreen(
                     TextButton(
                         onClick = {
                             authViewModel.logout()
-                            navController.navigate("login") {
-                                popUpTo(0) { inclusive = true }
-                            }
+
                         }
                     ) {
                         Text("Logout")

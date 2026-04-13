@@ -25,7 +25,7 @@ fun LoginScreen(
 
 
     // 🔹 Redirect after successful login
-    LaunchedEffect(state) {
+    LaunchedEffect(state is AuthState.Success) {
         if (state is AuthState.Success) {
             val role = authViewModel.getCurrentUserRole()
             when (role) {
