@@ -12,6 +12,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.bhumiledger.MainViewModel
+import com.example.bhumiledger.auth.AuthState
 import com.example.bhumiledger.auth.AuthViewModel
 import com.example.bhumiledger.domain.model.ClaimStatus
 import utils.FileUtils
@@ -25,6 +26,7 @@ fun CitizenClaimScreen(
 ) {
 
     val context = LocalContext.current
+    val state by authViewModel.authState.collectAsState()
 
     var selectedDocumentPath by remember { mutableStateOf<String?>(null) }
     var parcelId by remember { mutableStateOf("") }
@@ -45,6 +47,14 @@ fun CitizenClaimScreen(
         }
     }
 
+    LaunchedEffect(state is AuthState.LoggedOut) {
+        if(state is AuthState.LoggedOut) {
+            navController.navigate("login") {
+                popUpTo(0){inclusive = true}
+            }
+        }
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -53,9 +63,7 @@ fun CitizenClaimScreen(
                     TextButton(
                         onClick = {
                             authViewModel.logout()
-                            navController.navigate("login") {
-                                popUpTo(0) { inclusive = true }
-                            }
+
                         }
                     ) {
                         Text("Logout")

@@ -22,7 +22,7 @@ class AuthViewModel(
 
     fun logout() {
         sessionManager.clearSession()
-        _authState.value = AuthState.Idle
+        _authState.value = AuthState.LoggedOut
     }
 
     fun getCurrentUserId(): String? {
