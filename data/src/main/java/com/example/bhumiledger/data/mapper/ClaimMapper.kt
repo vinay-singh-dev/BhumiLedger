@@ -1,0 +1,33 @@
+package com.example.bhumiledger.data.mapper
+
+import com.example.bhumiledger.data.local.room.ClaimEntity
+import com.example.bhumiledger.domain.model.ClaimStatus
+import com.example.bhumiledger.domain.model.OwnershipClaim
+
+class ClaimMapper {
+
+    fun toDomain( entity : ClaimEntity): OwnershipClaim {
+        return OwnershipClaim(
+            id = entity.claimId,
+            parcelId = entity.parcelId,
+            claimantId = entity.claimantId,
+            status = ClaimStatus.valueOf(entity.status),
+            documentPath = entity.documentPath,
+            syncState = entity.syncState
+        )
+    }
+
+    fun toEntity( domain : OwnershipClaim): ClaimEntity {
+        return ClaimEntity(
+            claimId = domain.id,
+            parcelId = domain.parcelId,
+            claimantId = domain.claimantId,
+            status = domain.status.name,
+            createdAt = System.currentTimeMillis(),
+            documentPath = domain.documentPath,
+            syncState = domain.syncState
+        )
+    }
+
+
+}

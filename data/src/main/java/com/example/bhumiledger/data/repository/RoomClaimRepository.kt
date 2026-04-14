@@ -4,6 +4,7 @@ import com.example.bhumiledger.data.local.room.ClaimDao
 import com.example.bhumiledger.data.local.room.ClaimEntity
 import com.example.bhumiledger.domain.model.ClaimStatus
 import com.example.bhumiledger.domain.model.OwnershipClaim
+import com.example.bhumiledger.domain.model.SyncState
 import com.example.bhumiledger.domain.repository.ClaimRepository
 
 
@@ -19,7 +20,8 @@ class RoomClaimRepository(
             claimantId = claim.claimantId,
             status = claim.status.name,
             createdAt = System.currentTimeMillis(),
-            documentPath = claim.documentPath
+            documentPath = claim.documentPath,
+            syncState = claim.syncState
         )
 
         dao.insert(entity)
@@ -35,7 +37,8 @@ class RoomClaimRepository(
                 parcelId = it.parcelId,
                 claimantId = it.claimantId,
                 status = ClaimStatus.valueOf(it.status),
-                documentPath = it.documentPath
+                documentPath = it.documentPath,
+                syncState = it.syncState
             )
         }
     }
@@ -50,7 +53,8 @@ class RoomClaimRepository(
                 parcelId = it.parcelId,
                 claimantId = it.claimantId,
                 status = ClaimStatus.valueOf(it.status),
-                documentPath = it.documentPath
+                documentPath = it.documentPath,
+                syncState = it.syncState
             )
         }
     }
@@ -75,7 +79,8 @@ class RoomClaimRepository(
                 parcelId = it.parcelId,
                 claimantId = it.claimantId,
                 status = ClaimStatus.valueOf(it.status),
-                documentPath = it.documentPath
+                documentPath = it.documentPath,
+                syncState = it.syncState
             )
         }
     }
@@ -87,7 +92,28 @@ class RoomClaimRepository(
                 parcelId = it.parcelId,
                 claimantId = it.claimantId,
                 status = ClaimStatus.valueOf(it.status),
-                documentPath = it.documentPath
+                documentPath = it.documentPath,
+                syncState = it.syncState
+            )
+        }
+    }
+
+    override suspend fun updateSyncState(
+        claimId: String,
+        state: SyncState
+    ) {
+        dao.updateSyncState(claimId,state)
+    }
+
+    override suspend fun getPendingSyncClaims(): List<OwnershipClaim> {
+        return dao.getPendingSyncClaims().map {
+            OwnershipClaim (
+                id = it.claimId,
+                parcelId = it.parcelId,
+                claimantId = it.claimantId,
+                status = ClaimStatus.valueOf(it.status),
+                documentPath = it.documentPath,
+                syncState = it.syncState
             )
         }
     }
