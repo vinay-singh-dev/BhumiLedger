@@ -11,10 +11,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.work.OneTimeWorkRequest
+import androidx.work.WorkManager
 import com.example.bhumiledger.MainViewModel
 import com.example.bhumiledger.auth.AuthState
 import com.example.bhumiledger.auth.AuthViewModel
 import com.example.bhumiledger.domain.model.ClaimStatus
+import com.example.bhumiledger.worker.SyncWorker
 import utils.FileUtils
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -125,6 +128,11 @@ fun CitizenClaimScreen(
                             userId,
                             selectedDocumentPath
                         )
+
+                        // 🔥 Trigger sync
+                        WorkManager.getInstance(context)
+                            .enqueue(OneTimeWorkRequest.from(SyncWorker::class.java))
+
                     }
                 },
                 modifier = Modifier.fillMaxWidth()
