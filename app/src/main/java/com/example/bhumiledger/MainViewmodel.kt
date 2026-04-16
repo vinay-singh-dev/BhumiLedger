@@ -1,11 +1,18 @@
 package com.example.bhumiledger
 
+import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.work.BackoffPolicy
+import androidx.work.Constraints
+import androidx.work.ExistingWorkPolicy
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import com.example.bhumiledger.auth.toMessage
 import com.example.bhumiledger.domain.model.Block
 import com.example.bhumiledger.domain.model.UserRole
@@ -13,10 +20,13 @@ import com.example.bhumiledger.domain.model.OwnershipClaim
 import com.example.bhumiledger.domain.result.DomainResult
 import com.example.bhumiledger.ui.model.ClaimWithUser
 import com.example.bhumiledger.ui.model.RegistryEntryWithUser
+import com.example.bhumiledger.worker.SyncWorker
 import kotlinx.coroutines.launch
+import java.util.concurrent.TimeUnit
 
 class MainViewModel(
-    private val container: BhumiLedgerContainer
+    private val container: BhumiLedgerContainer,
+    private val syncScheduler: SyncScheduler
 ) : ViewModel() {
 
     var status by mutableStateOf("Idle")
@@ -124,6 +134,8 @@ class MainViewModel(
 
                     loadUserClaims(claimantId)
 
+                    syncScheduler.scheduleSync()
+
                     Log.d("ROOM_TEST", status)
                 }
 
@@ -222,6 +234,32 @@ class MainViewModel(
             }
         }
     }
+
+    // Sync work
+
+    fun triggerSync(context: Context) {
+
+        val workRequest = OneTimeWorkRequestBuilder<SyncWorker>()
+            .setConstraints(
+                Constraints.Builder()
+                    .setRequiredNetworkType(NetworkType.CONNECTED)
+                    .build()
+            )
+            .setBackoffCriteria(
+                BackoffPolicy.EXPONENTIAL,
+                10,
+                TimeUnit.SECONDS
+            )
+            .build()
+
+        WorkManager.getInstance(context)
+            .enqueueUniqueWork(
+                "sync_claims",
+                ExistingWorkPolicy.KEEP,
+                workRequest
+            )
+    }
+
 
     fun loadPendingClaims() {
         viewModelScope.launch {

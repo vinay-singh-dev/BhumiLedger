@@ -36,6 +36,6 @@ interface ClaimDao {
     @Query ("UPDATE claims SET syncState = :state WHERE claimId = :claimId")
     suspend fun updateSyncState(claimId: String , state: SyncState)
 
-    @Query("SELECT * FROM claims WHERE syncState = 'PENDING'")
+    @Query("SELECT * FROM claims WHERE syncState IN ('PENDING', 'FAILED')")
     suspend fun getPendingSyncClaims(): List<ClaimEntity>
 }

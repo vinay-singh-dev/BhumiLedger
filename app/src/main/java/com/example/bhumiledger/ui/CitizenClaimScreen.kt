@@ -6,21 +6,14 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.work.Constraints
-import androidx.work.NetworkType
-import androidx.work.OneTimeWorkRequest
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkManager
 import com.example.bhumiledger.MainViewModel
 import com.example.bhumiledger.auth.AuthState
 import com.example.bhumiledger.auth.AuthViewModel
 import com.example.bhumiledger.domain.model.ClaimStatus
-import com.example.bhumiledger.worker.SyncWorker
 import utils.FileUtils
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -129,20 +122,11 @@ fun CitizenClaimScreen(
                         mainViewModel.submitClaim(
                             parcelId,
                             userId,
-                            selectedDocumentPath
+                            selectedDocumentPath,
                         )
 
                         // 🔥 Smart WorkRequest with constraint
-                        val workRequest = OneTimeWorkRequestBuilder<SyncWorker>()
-                            .setConstraints(
-                                Constraints.Builder()
-                                    .setRequiredNetworkType(NetworkType.CONNECTED)
-                                    .build()
-                            )
-                            .build()
 
-                        WorkManager.getInstance(context)
-                            .enqueue(workRequest)
 
                     }
                 },

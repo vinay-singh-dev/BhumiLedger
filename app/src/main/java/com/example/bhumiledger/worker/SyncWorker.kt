@@ -15,26 +15,14 @@ class SyncWorker (
     override suspend fun doWork(): Result {
 
         val app = applicationContext as BhumiLedgerApp
-        val repository = app.claimRepository
-        val pendingClaims = repository.getPendingSyncClaims()
+        val useCase = app.syncClaimsUseCase
 
-        for(claim in pendingClaims) {
-            try {
+        val hasFailure = useCase()
 
-                repository.updateSyncState(
-                    claim.id,
-                    SyncState.SYNCED
-                )
-            } catch (e: Exception) {
-
-                repository.updateSyncState(
-                    claim.id,
-                    SyncState.FAILED
-                )
-            }
+        return if (hasFailure) {
+            Result.retry()
+        } else {
+            Result.success()
         }
-        return Result.success()
-
     }
-
 }
