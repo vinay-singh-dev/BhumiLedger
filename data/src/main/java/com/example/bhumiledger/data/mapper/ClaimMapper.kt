@@ -13,7 +13,8 @@ class ClaimMapper {
             claimantId = entity.claimantId,
             status = ClaimStatus.valueOf(entity.status),
             documentPath = entity.documentPath,
-            syncState = entity.syncState
+            syncState = entity.syncState,
+            createdAt = entity.createdAt
         )
     }
 
@@ -23,7 +24,7 @@ class ClaimMapper {
             parcelId = domain.parcelId,
             claimantId = domain.claimantId,
             status = domain.status.name,
-            createdAt = System.currentTimeMillis(),
+            createdAt = domain.createdAt,
             documentPath = domain.documentPath,
             syncState = domain.syncState
         )

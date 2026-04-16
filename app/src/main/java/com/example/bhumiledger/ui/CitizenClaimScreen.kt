@@ -11,7 +11,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.work.Constraints
+import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequest
+import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.example.bhumiledger.MainViewModel
 import com.example.bhumiledger.auth.AuthState
@@ -129,9 +132,17 @@ fun CitizenClaimScreen(
                             selectedDocumentPath
                         )
 
-                        // 🔥 Trigger sync
+                        // 🔥 Smart WorkRequest with constraint
+                        val workRequest = OneTimeWorkRequestBuilder<SyncWorker>()
+                            .setConstraints(
+                                Constraints.Builder()
+                                    .setRequiredNetworkType(NetworkType.CONNECTED)
+                                    .build()
+                            )
+                            .build()
+
                         WorkManager.getInstance(context)
-                            .enqueue(OneTimeWorkRequest.from(SyncWorker::class.java))
+                            .enqueue(workRequest)
 
                     }
                 },

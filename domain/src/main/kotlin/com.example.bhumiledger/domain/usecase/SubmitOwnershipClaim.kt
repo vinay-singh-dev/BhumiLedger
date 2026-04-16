@@ -50,7 +50,8 @@ class SubmitOwnershipClaim(
             claimantId = claimantId,
             status = ClaimStatus.PENDING,
             documentPath = documentPath,
-            syncState = SyncState.PENDING
+            syncState = SyncState.PENDING,
+            createdAt = System.currentTimeMillis()
         )
 
         claimRepository.saveClaim(claim)
