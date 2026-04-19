@@ -21,6 +21,7 @@ import com.example.bhumiledger.domain.result.DomainResult
 import com.example.bhumiledger.ui.model.ClaimWithUser
 import com.example.bhumiledger.ui.model.RegistryEntryWithUser
 import com.example.bhumiledger.worker.SyncWorker
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
 
@@ -56,12 +57,16 @@ class MainViewModel(
     // CITIZEN ACTION
     // ===============================
 
-    fun loadUserClaims(userId: String) {
-        viewModelScope.launch {
-            val result = container.getClaimsByUser(userId)
-            if (result is DomainResult.Success) {
-                userClaims = result.data
-            }
+    private var observeJob: Job? = null
+
+    fun observeUserClaims(userId: String) {
+        observeJob?.cancel()
+
+        observeJob = viewModelScope.launch {
+            container.getClaimsByUser(userId)
+                .collect { claims ->
+                    userClaims = claims
+                }
         }
     }
 
@@ -132,7 +137,6 @@ class MainViewModel(
 
                     status = "Claim Submitted: ${claim.id}"
 
-                    loadUserClaims(claimantId)
 
                     syncScheduler.scheduleSync()
 
@@ -237,28 +241,28 @@ class MainViewModel(
 
     // Sync work
 
-    fun triggerSync(context: Context) {
-
-        val workRequest = OneTimeWorkRequestBuilder<SyncWorker>()
-            .setConstraints(
-                Constraints.Builder()
-                    .setRequiredNetworkType(NetworkType.CONNECTED)
-                    .build()
-            )
-            .setBackoffCriteria(
-                BackoffPolicy.EXPONENTIAL,
-                10,
-                TimeUnit.SECONDS
-            )
-            .build()
-
-        WorkManager.getInstance(context)
-            .enqueueUniqueWork(
-                "sync_claims",
-                ExistingWorkPolicy.KEEP,
-                workRequest
-            )
-    }
+//    fun triggerSync(context: Context) {
+//
+//        val workRequest = OneTimeWorkRequestBuilder<SyncWorker>()
+//            .setConstraints(
+//                Constraints.Builder()
+//                    .setRequiredNetworkType(NetworkType.CONNECTED)
+//                    .build()
+//            )
+//            .setBackoffCriteria(
+//                BackoffPolicy.EXPONENTIAL,
+//                10,
+//                TimeUnit.SECONDS
+//            )
+//            .build()
+//
+//        WorkManager.getInstance(context)
+//            .enqueueUniqueWork(
+//                "sync_claims",
+//                ExistingWorkPolicy.KEEP,
+//                workRequest
+//            )
+//    }
 
 
     fun loadPendingClaims() {

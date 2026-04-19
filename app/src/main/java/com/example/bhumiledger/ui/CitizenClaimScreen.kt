@@ -42,9 +42,9 @@ fun CitizenClaimScreen(
             }
         }
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(authViewModel.getCurrentUserId()) {
         authViewModel.getCurrentUserId()?.let {
-            mainViewModel.loadUserClaims(it)
+            mainViewModel.observeUserClaims(it)
         }
     }
 

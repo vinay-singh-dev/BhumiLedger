@@ -5,6 +5,8 @@ import com.example.bhumiledger.data.mapper.ClaimMapper
 import com.example.bhumiledger.domain.model.OwnershipClaim
 import com.example.bhumiledger.domain.model.SyncState
 import com.example.bhumiledger.domain.repository.ClaimRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 class RoomClaimRepository(
     private val dao: ClaimDao
@@ -46,9 +48,9 @@ class RoomClaimRepository(
         }
     }
 
-    override suspend fun getClaimsByUser(userId: String): List<OwnershipClaim> {
-        return dao.getByUserId(userId).map {
-            mapper.toDomain(it)
+    override fun getClaimsByUser(userId: String): Flow<List<OwnershipClaim>> {
+        return dao.getByUserId(userId).map { list ->
+           list.map {mapper.toDomain(it) }
         }
     }
 
