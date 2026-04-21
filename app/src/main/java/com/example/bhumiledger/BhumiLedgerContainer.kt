@@ -22,6 +22,7 @@ import com.example.bhumiledger.domain.usecase.SubmitOwnershipClaim
 import com.example.bhumiledger.domain.usecase.ValidateBlockchainUseCase
 import com.example.bhumiledger.domain.usecase.VerifyOwnershipClaim
 import com.example.bhumiledger.session.SessionManager
+import kotlinx.coroutines.flow.Flow
 
 class BhumiLedgerContainer(context: Context) {
 
@@ -141,7 +142,7 @@ class BhumiLedgerContainer(context: Context) {
     ) =
         getOwnershipHistoryUseCase(parcelId)
 
-    suspend fun getClaimsByUser(userId: String) =
+    fun getClaimsByUser(userId: String) : Flow<List<OwnershipClaim>> =
         getClaimsByUserUseCase(userId)
 
     suspend fun rejectOwnershipClaim(

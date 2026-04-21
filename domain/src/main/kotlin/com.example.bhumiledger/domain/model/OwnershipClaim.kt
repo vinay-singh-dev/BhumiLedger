@@ -5,7 +5,9 @@ data class OwnershipClaim(
     val parcelId: String,
     val claimantId: String,
     val status: ClaimStatus,
-    val documentPath: String? = null
+    val documentPath: String? = null,
+    val syncState:SyncState,
+    val createdAt: Long
 )
 
 enum class ClaimStatus {

@@ -1,62 +1,36 @@
 package com.example.bhumiledger.data.repository
 
 import com.example.bhumiledger.data.local.room.ClaimDao
-import com.example.bhumiledger.data.local.room.ClaimEntity
-import com.example.bhumiledger.domain.model.ClaimStatus
+import com.example.bhumiledger.data.mapper.ClaimMapper
 import com.example.bhumiledger.domain.model.OwnershipClaim
+import com.example.bhumiledger.domain.model.SyncState
 import com.example.bhumiledger.domain.repository.ClaimRepository
-
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 class RoomClaimRepository(
     private val dao: ClaimDao
 ) : ClaimRepository {
 
+    private val mapper = ClaimMapper()
+
     override suspend fun saveClaim(claim: OwnershipClaim) {
-
-        val entity = ClaimEntity(
-            claimId = claim.id,
-            parcelId = claim.parcelId,
-            claimantId = claim.claimantId,
-            status = claim.status.name,
-            createdAt = System.currentTimeMillis(),
-            documentPath = claim.documentPath
-        )
-
-        dao.insert(entity)
+        dao.insert(mapper.toEntity(claim))
     }
 
     override suspend fun getClaimById(claimId: String): OwnershipClaim? {
-
-        val entity = dao.getById(claimId)
-
-        return entity?.let {
-            OwnershipClaim(
-                id = it.claimId,
-                parcelId = it.parcelId,
-                claimantId = it.claimantId,
-                status = ClaimStatus.valueOf(it.status),
-                documentPath = it.documentPath
-            )
+        return dao.getById(claimId)?.let {
+            mapper.toDomain(it)
         }
     }
 
     override suspend fun getPendingClaimForParcel(parcelId: String): OwnershipClaim? {
-
-        val entity = dao.getPendingClaim(parcelId)
-
-        return entity?.let {
-            OwnershipClaim(
-                id = it.claimId,
-                parcelId = it.parcelId,
-                claimantId = it.claimantId,
-                status = ClaimStatus.valueOf(it.status),
-                documentPath = it.documentPath
-            )
+        return dao.getPendingClaim(parcelId)?.let {
+            mapper.toDomain(it)
         }
     }
 
     override suspend fun updateClaim(claim: OwnershipClaim) {
-
         val existing = dao.getEntityByClaimId(claim.id)
             ?: return
 
@@ -70,25 +44,26 @@ class RoomClaimRepository(
 
     override suspend fun getAllPendingClaims(): List<OwnershipClaim> {
         return dao.getAllPending().map {
-            OwnershipClaim(
-                id = it.claimId,
-                parcelId = it.parcelId,
-                claimantId = it.claimantId,
-                status = ClaimStatus.valueOf(it.status),
-                documentPath = it.documentPath
-            )
+            mapper.toDomain(it)
         }
     }
 
-    override suspend fun getClaimsByUser(userId: String): List<OwnershipClaim> {
-        return dao.getByUserId(userId).map {
-            OwnershipClaim(
-                id = it.claimId,
-                parcelId = it.parcelId,
-                claimantId = it.claimantId,
-                status = ClaimStatus.valueOf(it.status),
-                documentPath = it.documentPath
-            )
+    override fun getClaimsByUser(userId: String): Flow<List<OwnershipClaim>> {
+        return dao.getByUserId(userId).map { list ->
+           list.map {mapper.toDomain(it) }
+        }
+    }
+
+    override suspend fun updateSyncState(
+        claimId: String,
+        state: SyncState
+    ) {
+        dao.updateSyncState(claimId, state)
+    }
+
+    override suspend fun getPendingSyncClaims(): List<OwnershipClaim> {
+        return dao.getPendingSyncClaims().map {
+            mapper.toDomain(it)
         }
     }
 }

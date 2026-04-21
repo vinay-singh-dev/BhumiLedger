@@ -64,13 +64,20 @@ dependencies {
     implementation(project(":domain"))
     implementation("androidx.navigation:navigation-compose:2.7.7")
     debugImplementation(libs.androidx.compose.ui.test.manifest)
-
-}
-    }
-dependencies {
     implementation(libs.androidx.compose.foundation)
     implementation(libs.androidx.compose.runtime)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.ui)
+
 }
+    }
+dependencies {
+    implementation(libs.androidx.work.runtime.ktx)
+}
+//dependencies {
+////    implementation(libs.androidx.compose.foundation)
+////    implementation(libs.androidx.compose.runtime)
+////    implementation(libs.androidx.material3)
+////    implementation(libs.androidx.ui)
+//}
 

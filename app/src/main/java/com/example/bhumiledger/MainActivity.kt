@@ -13,9 +13,11 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        val app = application as BhumiLedgerApp
         val container = BhumiLedgerContainer(applicationContext)
 
-        val mainViewModel = MainViewModel(container)
+        val mainViewModel = MainViewModel(container,
+            app.syncScheduler)
 
         val authViewModel = AuthViewModel(
             loginUserUseCase = container.loginUserUseCase,

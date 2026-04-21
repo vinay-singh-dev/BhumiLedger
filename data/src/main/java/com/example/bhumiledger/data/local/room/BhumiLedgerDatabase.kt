@@ -2,6 +2,8 @@ package com.example.bhumiledger.data.local.room
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
+import com.example.bhumiledger.data.local.converter.SyncStateConverter
 
 @Database(
     entities = [
@@ -13,6 +15,8 @@ import androidx.room.RoomDatabase
     version = 4,   // 👈 bump version
     exportSchema = false
 )
+
+@TypeConverters(SyncStateConverter::class)
 abstract class BhumiLedgerDatabase : RoomDatabase() {
 
     abstract fun registryDao(): RegistryDao

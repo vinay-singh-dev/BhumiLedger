@@ -4,6 +4,8 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
+import com.example.bhumiledger.domain.model.SyncState
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ClaimDao {
@@ -30,5 +32,11 @@ interface ClaimDao {
     suspend fun getAllPending(): List<ClaimEntity>
 
     @Query("SELECT * FROM claims WHERE claimantId = :userId")
-    suspend fun getByUserId(userId: String): List<ClaimEntity>
+     fun getByUserId(userId: String): Flow<List<ClaimEntity>>
+
+    @Query ("UPDATE claims SET syncState = :state WHERE claimId = :claimId")
+    suspend fun updateSyncState(claimId: String , state: SyncState)
+
+    @Query("SELECT * FROM claims WHERE syncState IN ('PENDING', 'FAILED')")
+    suspend fun getPendingSyncClaims(): List<ClaimEntity>
 }

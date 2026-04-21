@@ -3,6 +3,7 @@ package com.example.bhumiledger.domain.usecase
 import com.example.bhumiledger.domain.model.ClaimStatus
 import com.example.bhumiledger.domain.model.OwnershipClaim
 import com.example.bhumiledger.domain.error.DomainError
+import com.example.bhumiledger.domain.model.SyncState
 import com.example.bhumiledger.domain.repository.ClaimRepository
 import com.example.bhumiledger.domain.repository.RegistryRepository
 import com.example.bhumiledger.domain.result.DomainResult
@@ -48,7 +49,9 @@ class SubmitOwnershipClaim(
             parcelId = parcelId,
             claimantId = claimantId,
             status = ClaimStatus.PENDING,
-            documentPath = documentPath
+            documentPath = documentPath,
+            syncState = SyncState.PENDING,
+            createdAt = System.currentTimeMillis()
         )
 
         claimRepository.saveClaim(claim)

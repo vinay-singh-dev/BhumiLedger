@@ -5,8 +5,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -15,6 +15,7 @@ import com.example.bhumiledger.MainViewModel
 import com.example.bhumiledger.auth.AuthState
 import com.example.bhumiledger.auth.AuthViewModel
 import com.example.bhumiledger.domain.model.ClaimStatus
+import com.example.bhumiledger.domain.model.SyncState
 import utils.FileUtils
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -41,9 +42,9 @@ fun CitizenClaimScreen(
             }
         }
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(authViewModel.getCurrentUserId()) {
         authViewModel.getCurrentUserId()?.let {
-            mainViewModel.loadUserClaims(it)
+            mainViewModel.observeUserClaims(it)
         }
     }
 
@@ -123,8 +124,12 @@ fun CitizenClaimScreen(
                         mainViewModel.submitClaim(
                             parcelId,
                             userId,
-                            selectedDocumentPath
+                            selectedDocumentPath,
                         )
+
+                        // 🔥 Smart WorkRequest with constraint
+
+
                     }
                 },
                 modifier = Modifier.fillMaxWidth()
@@ -164,6 +169,19 @@ fun CitizenClaimScreen(
                         ClaimStatus.REJECTED -> MaterialTheme.colorScheme.error
                     }
 
+                    val syncColor = when (claim.syncState) {
+                        SyncState.PENDING -> MaterialTheme.colorScheme.tertiary
+                        SyncState.SYNCED -> MaterialTheme.colorScheme.primary
+                        SyncState.FAILED -> MaterialTheme.colorScheme.error
+                    }
+
+                    val syncText = when (claim.syncState) {
+                        SyncState.PENDING -> "Syncing..."
+                        SyncState.SYNCED -> "Synced"
+                        SyncState.FAILED -> "Sync Failed"
+
+                    }
+
                     Card(
                         shape = MaterialTheme.shapes.large,
                         elevation = CardDefaults.cardElevation(6.dp),
@@ -184,7 +202,11 @@ fun CitizenClaimScreen(
                                 style = MaterialTheme.typography.titleMedium
                             )
 
-                            Divider()
+                            HorizontalDivider(
+                                Modifier,
+                                DividerDefaults.Thickness,
+                                DividerDefaults.color
+                            )
 
                             Row(
                                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -203,6 +225,33 @@ fun CitizenClaimScreen(
                                     Text(
                                         text = claim.status.name,
                                         color = statusColor,
+                                        modifier = Modifier.padding(
+                                            horizontal = 10.dp,
+                                            vertical = 4.dp
+                                        ),
+                                        style = MaterialTheme.typography.labelLarge
+                                    )
+                                }
+                            }
+
+                            Row(
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+
+                                Text(
+                                    text = "Sync",
+                                    style = MaterialTheme.typography.labelMedium
+                                )
+
+                                Surface(
+                                    color = syncColor.copy(alpha = 0.15f),
+                                    shape = MaterialTheme.shapes.small
+                                ) {
+//
+                                    Text(
+                                        text =  syncText,
+                                        color = syncColor,
                                         modifier = Modifier.padding(
                                             horizontal = 10.dp,
                                             vertical = 4.dp
