@@ -14,4 +14,18 @@
 .cxx
 local.properties
 
+# Gradle
+.gradle/
+build/
 
+# Local config
+
+# IDE
+.idea/
+
+# Native builds
+.externalNativeBuild/
+.cxx/
+
+# OS
+Thumbs.db

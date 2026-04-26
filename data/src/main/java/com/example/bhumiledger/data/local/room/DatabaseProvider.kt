@@ -15,7 +15,7 @@ object DatabaseProvider {
                 BhumiLedgerDatabase::class.java,
                 "bhumi_ledger_db"
             )
-                .fallbackToDestructiveMigration(dropAllTables = true)
+                .fallbackToDestructiveMigration()
                 .build()
 
             INSTANCE = instance
