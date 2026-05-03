@@ -15,8 +15,10 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.example.bhumiledger.auth.toMessage
 import com.example.bhumiledger.domain.model.Block
+import com.example.bhumiledger.domain.model.ClaimStatus
 import com.example.bhumiledger.domain.model.UserRole
 import com.example.bhumiledger.domain.model.OwnershipClaim
+import com.example.bhumiledger.domain.model.SyncState
 import com.example.bhumiledger.domain.result.DomainResult
 import com.example.bhumiledger.ui.model.ClaimWithUser
 import com.example.bhumiledger.ui.model.RegistryEntryWithUser
@@ -203,41 +205,64 @@ class MainViewModel(
         }
     }
 
-
-    // ===============================
-    // LOAD HISTORY
-    // ===============================
-    fun loadHistory(parcelId: String) {
-
+    fun testFirestore() {
         viewModelScope.launch {
 
-            Log.d("ROOM_TEST", "Loading history")
+            val result = container.submitOwnershipClaim(
+                parcelId = "LAND123",
+                claimantId = "USER_1",
+                documentPath = null
 
-            val result =
-                container.getOwnershipHistory(
-                    parcelId
-                )
+            )
 
             when (result) {
-
                 is DomainResult.Success -> {
-
-                    historySize = result.data.size
-
-                    status = "History entries: $historySize"
-
-                    Log.d("ROOM_TEST", status)
+                    Log.d("TEST", "Claim created: ${result.data.id}")
                 }
 
                 is DomainResult.Failure -> {
+                    Log.e("TEST", "Error: ${result.error}")
 
-                    status = result.error.toMessage()
-
-                    Log.e("ROOM_TEST", status)
                 }
             }
         }
     }
+
+
+    // ===============================
+    // LOAD HISTORY
+    // ===============================
+//    fun loadHistory(parcelId: String) {
+//
+//        viewModelScope.launch {
+//
+//            Log.d("ROOM_TEST", "Loading history")
+//
+//            val result =
+//                container.getOwnershipHistory(
+//                    parcelId
+//                )
+//
+//            when (result) {
+//
+//                is DomainResult.Success -> {
+//
+//                    historySize = result.data.size
+//
+//                    status = "History entries: $historySize"
+//
+//                    Log.d("ROOM_TEST", status)
+//                }
+//
+//                is DomainResult.Failure -> {
+//
+//                    status = result.error.toMessage()
+//
+//                    Log.e("ROOM_TEST", status)
+//                }
+//            }
+//        }
+//    }
 
     // Sync work
 

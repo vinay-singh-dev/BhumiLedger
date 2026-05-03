@@ -1,5 +1,6 @@
 package com.example.bhumiledger.data.repository
 
+import android.util.Log
 import com.example.bhumiledger.data.local.room.ClaimDao
 import com.example.bhumiledger.data.mapper.ClaimMapper
 import com.example.bhumiledger.domain.model.OwnershipClaim
@@ -7,15 +8,35 @@ import com.example.bhumiledger.domain.model.SyncState
 import com.example.bhumiledger.domain.repository.ClaimRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import remote.firestore.FirestoreDataSource
 
 class RoomClaimRepository(
-    private val dao: ClaimDao
+    private val dao: ClaimDao,
+    private val firestore: FirestoreDataSource
 ) : ClaimRepository {
 
     private val mapper = ClaimMapper()
 
     override suspend fun saveClaim(claim: OwnershipClaim) {
+
+        // saved locally
         dao.insert(mapper.toEntity(claim))
+
+        // sending to firestore and testing and checking
+        val data = mapOf(
+            "owner" to claim.claimantId,
+            "land" to claim.parcelId,
+            "timeStamp" to claim.createdAt
+        )
+
+        val result = firestore.addClaim(data)
+
+        if (result.isSuccess) {
+            Log.d("Firestore","Uploaded: ${result.getOrNull()}")
+        } else {
+            Log.d("FireStore","Upload Failed",result.exceptionOrNull())
+        }
+
     }
 
     override suspend fun getClaimById(claimId: String): OwnershipClaim? {
