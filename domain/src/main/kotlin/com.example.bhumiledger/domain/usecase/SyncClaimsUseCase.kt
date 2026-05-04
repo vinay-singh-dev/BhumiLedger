@@ -20,6 +20,8 @@ class SyncClaimsUseCase(
 //                    throw Exception("Fail some claims only")
 //                }
 
+
+
                 repository.updateSyncState(
                     claim.id,
                     SyncState.SYNCED

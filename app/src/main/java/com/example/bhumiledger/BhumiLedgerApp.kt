@@ -5,7 +5,7 @@ import com.example.bhumiledger.data.local.room.DatabaseProvider
 import com.example.bhumiledger.data.repository.RoomClaimRepository
 import com.example.bhumiledger.domain.repository.ClaimRepository
 import com.example.bhumiledger.domain.usecase.SyncClaimsUseCase
-import remote.firestore.FirestoreDataSource
+import com.example.bhumiledger.data.remote.firestore.FirestoreDataSource
 
 class BhumiLedgerApp: Application() {
 

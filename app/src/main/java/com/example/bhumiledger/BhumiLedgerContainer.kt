@@ -23,7 +23,7 @@ import com.example.bhumiledger.domain.usecase.ValidateBlockchainUseCase
 import com.example.bhumiledger.domain.usecase.VerifyOwnershipClaim
 import com.example.bhumiledger.session.SessionManager
 import kotlinx.coroutines.flow.Flow
-import remote.firestore.FirestoreDataSource
+import com.example.bhumiledger.data.remote.firestore.FirestoreDataSource
 
 class BhumiLedgerContainer(context: Context) {
 

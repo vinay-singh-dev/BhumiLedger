@@ -205,28 +205,28 @@ class MainViewModel(
         }
     }
 
-    fun testFirestore() {
-        viewModelScope.launch {
-
-            val result = container.submitOwnershipClaim(
-                parcelId = "LAND123",
-                claimantId = "USER_1",
-                documentPath = null
-
-            )
-
-            when (result) {
-                is DomainResult.Success -> {
-                    Log.d("TEST", "Claim created: ${result.data.id}")
-                }
-
-                is DomainResult.Failure -> {
-                    Log.e("TEST", "Error: ${result.error}")
-
-                }
-            }
-        }
-    }
+//    fun testFirestore() {
+//        viewModelScope.launch {
+//
+//            val result = container.submitOwnershipClaim(
+//                parcelId = "LAND123",
+//                claimantId = "USER_1",
+//                documentPath = null
+//
+//            )
+//
+//            when (result) {
+//                is DomainResult.Success -> {
+//                    Log.d("TEST", "Claim created: ${result.data.id}")
+//                }
+//
+//                is DomainResult.Failure -> {
+//                    Log.e("TEST", "Error: ${result.error}")
+//
+//                }
+//            }
+//        }
+//    }
 
 
     // ===============================
