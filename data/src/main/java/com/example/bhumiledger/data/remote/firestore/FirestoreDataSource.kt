@@ -17,8 +17,8 @@ class FirestoreDataSource {
     suspend fun addClaim(dto : ClaimDto): Result<String> {
         return try {
             val docRef = firestore
-                .collection(COLLECTION_CLAIMS)
-                .add(dto)
+                .collection.document(dto.claimId)
+                .set(dto)
                 .await()
             Result.success(docRef.id)
         } catch ( e :Exception ) {

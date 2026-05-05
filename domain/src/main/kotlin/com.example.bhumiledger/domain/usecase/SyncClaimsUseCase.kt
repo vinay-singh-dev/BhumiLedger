@@ -15,27 +15,16 @@ class SyncClaimsUseCase(
 
         for (claim in pendingClaims) {
             try {
+                val result = repository.pushToFirestore(claim)
 
-//                if (claim.id.hashCode() % 2 == 0) {
-//                    throw Exception("Fail some claims only")
-//                }
-
-
-
-                repository.updateSyncState(
-                    claim.id,
-                    SyncState.SYNCED
-                )
-
+                if (result.isFailure) {
+                    hasFailure = true
+                }
             } catch (e: Exception) {
-                repository.updateSyncState(
-                    claim.id,
-                    SyncState.FAILED
-                )
+                repository.updateSyncState(claim.id, SyncState.FAILED)
                 hasFailure = true
             }
         }
-
         return hasFailure
     }
 }

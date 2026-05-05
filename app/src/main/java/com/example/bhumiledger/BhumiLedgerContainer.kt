@@ -24,6 +24,7 @@ import com.example.bhumiledger.domain.usecase.VerifyOwnershipClaim
 import com.example.bhumiledger.session.SessionManager
 import kotlinx.coroutines.flow.Flow
 import com.example.bhumiledger.data.remote.firestore.FirestoreDataSource
+import com.example.bhumiledger.data.remote.firestore.dto.ClaimDto
 
 class BhumiLedgerContainer(context: Context) {
 
@@ -160,4 +161,9 @@ class BhumiLedgerContainer(context: Context) {
 
     suspend fun getUserById(userId: String) =
         authRepository.getUserById(userId)
+
+    suspend fun testFirestore(dto: ClaimDto): Result<String> {
+        return firestoreDataSource.addClaim(dto)
+}
+
 }

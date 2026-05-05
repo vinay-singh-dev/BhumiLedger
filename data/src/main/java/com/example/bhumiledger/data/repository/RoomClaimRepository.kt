@@ -77,14 +77,16 @@ class RoomClaimRepository(
 
     override suspend fun pushToFirestore(claim: OwnershipClaim): Result<String> {
 
-                    val dto = claim.toDto()
+        val dto = claim.toDto()
         Log.d("SYNC_DEBUG", "Uploading DTO = $dto")
             val result = firestore.addClaim(dto)
         return if (result.isSuccess) {
+            Log.d("SYNC_DEBUG", "SUCCESS: ${result.getOrNull()}")
             dao.updateSyncState(claim.id,SyncState.SYNCED)
             result
         } else {
             dao.updateSyncState(claim.id,SyncState.FAILED)
+            Log.e("SYNC_DEBUG", "FAILED: ${result.exceptionOrNull()}")
             result
         }
 

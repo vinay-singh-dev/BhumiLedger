@@ -11,7 +11,7 @@ import java.util.UUID
 
 class SubmitOwnershipClaim(
     private val claimRepository: ClaimRepository,
-    private val registryRepository: RegistryRepository
+    private val registryRepository: RegistryRepository,
 ) {
 
     suspend operator fun invoke(

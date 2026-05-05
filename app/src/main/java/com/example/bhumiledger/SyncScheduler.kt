@@ -32,7 +32,7 @@ class SyncScheduler(
         WorkManager.getInstance(context)
             .enqueueUniqueWork(
                 "sync_claims",
-                ExistingWorkPolicy.KEEP,
+                ExistingWorkPolicy.REPLACE,
                 workRequest
             )
     }
