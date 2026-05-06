@@ -290,31 +290,31 @@ class MainViewModel(
 //            )
 //    }
 
-    fun testFirestoreDirect() {
-        viewModelScope.launch {
-
-            Log.d("TEST_FIREBASE", "Starting direct test")
-
-            val result = container.testFirestore(
-                ClaimDto(
-                    claimId = "test123",
-                    owner = "user1",
-                    land = "land1",
-                    status = "PENDING",
-                    documentHash = null,
-                    createdAt = System.currentTimeMillis(),
-                    verifiedBy = null,
-                    verifiedAt = null
-                )
-            )
-
-            if (result.isSuccess) {
-                Log.d("TEST_FIREBASE", "SUCCESS: ${result.getOrNull()}")
-            } else {
-                Log.e("TEST_FIREBASE", "FAILED: ${result.exceptionOrNull()}")
-            }
-        }
-    }
+//    fun testFirestoreDirect() {
+//        viewModelScope.launch {
+//
+//            Log.d("TEST_FIREBASE", "Starting direct test")
+//
+//            val result = container.testFirestore(
+//                ClaimDto(
+//                    claimId = "test123",
+//                    owner = "user1",
+//                    land = "land1",
+//                    status = "PENDING",
+//                    documentHash = null,
+//                    createdAt = System.currentTimeMillis(),
+//                    verifiedBy = null,
+//                    verifiedAt = null
+//                )
+//            )
+//
+//            if (result.isSuccess) {
+//                Log.d("TEST_FIREBASE", "SUCCESS: ${result.getOrNull()}")
+//            } else {
+//                Log.e("TEST_FIREBASE", "FAILED: ${result.exceptionOrNull()}")
+//            }
+//        }
+//    }
 
     fun loadPendingClaims() {
         viewModelScope.launch {

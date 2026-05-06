@@ -162,8 +162,6 @@ class BhumiLedgerContainer(context: Context) {
     suspend fun getUserById(userId: String) =
         authRepository.getUserById(userId)
 
-    suspend fun testFirestore(dto: ClaimDto): Result<String> {
-        return firestoreDataSource.addClaim(dto)
-}
-
+//    suspend fun testFirestore(dto: ClaimDto): Result<String> {
+//        return firestoreDataSource.addClaim(dto)
 }

@@ -17,11 +17,13 @@ class FirestoreDataSource {
     suspend fun addClaim(dto : ClaimDto): Result<String> {
         return try {
             val docRef = firestore
-                .collection.document(dto.claimId)
+                .collection(COLLECTION_CLAIMS)
+                .document(dto.claimId)
                 .set(dto)
                 .await()
-            Result.success(docRef.id)
+            Result.success(dto.claimId)
         } catch ( e :Exception ) {
+            Log.e("Firestore" ,"Upload Failed",e )
             Result.failure(e)
         }
 

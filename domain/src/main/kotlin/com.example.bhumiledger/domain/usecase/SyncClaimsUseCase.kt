@@ -22,9 +22,9 @@ class SyncClaimsUseCase(
                 }
             } catch (e: Exception) {
                 repository.updateSyncState(claim.id, SyncState.FAILED)
-                hasFailure = true
+                 hasFailure = true
             }
         }
         return hasFailure
     }
-}
+    }
