@@ -12,6 +12,7 @@ class ClaimMapper {
             parcelId = entity.parcelId,
             claimantId = entity.claimantId,
             status = ClaimStatus.valueOf(entity.status),
+            documentHash = entity.documentHash,
             documentPath = entity.documentPath,
             syncState = entity.syncState,
             createdAt = entity.createdAt
@@ -25,6 +26,7 @@ class ClaimMapper {
             claimantId = domain.claimantId,
             status = domain.status.name,
             createdAt = domain.createdAt,
+            documentHash = domain.documentHash,
             documentPath = domain.documentPath,
             syncState = domain.syncState
         )

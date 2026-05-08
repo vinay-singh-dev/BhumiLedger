@@ -13,5 +13,6 @@ interface ClaimRepository {
      fun getClaimsByUser(userId: String): Flow<List<OwnershipClaim>>
     suspend fun updateSyncState(claimId :String , state: SyncState)
     suspend fun getPendingSyncClaims():List <OwnershipClaim>
+    suspend fun pushToFirestore(claim: OwnershipClaim): Result<String>
 
 }

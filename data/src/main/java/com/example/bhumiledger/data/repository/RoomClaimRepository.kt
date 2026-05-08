@@ -1,20 +1,26 @@
 package com.example.bhumiledger.data.repository
 
+import android.util.Log
 import com.example.bhumiledger.data.local.room.ClaimDao
 import com.example.bhumiledger.data.mapper.ClaimMapper
+import com.example.bhumiledger.data.mapper.toDto
 import com.example.bhumiledger.domain.model.OwnershipClaim
 import com.example.bhumiledger.domain.model.SyncState
 import com.example.bhumiledger.domain.repository.ClaimRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import com.example.bhumiledger.data.remote.firestore.FirestoreDataSource
 
 class RoomClaimRepository(
-    private val dao: ClaimDao
+    private val dao: ClaimDao,
+    private val firestore: FirestoreDataSource
 ) : ClaimRepository {
 
     private val mapper = ClaimMapper()
 
     override suspend fun saveClaim(claim: OwnershipClaim) {
+
+        // saved locally
         dao.insert(mapper.toEntity(claim))
     }
 
@@ -65,5 +71,24 @@ class RoomClaimRepository(
         return dao.getPendingSyncClaims().map {
             mapper.toDomain(it)
         }
+    }
+
+
+
+    override suspend fun pushToFirestore(claim: OwnershipClaim): Result<String> {
+
+        val dto = claim.toDto()
+        Log.d("SYNC_DEBUG", "Uploading DTO = $dto")
+            val result = firestore.addClaim(dto)
+        return if (result.isSuccess) {
+            Log.d("SYNC_DEBUG", "SUCCESS: ${result.getOrNull()}")
+            dao.updateSyncState(claim.id,SyncState.SYNCED)
+            result
+        } else {
+            dao.updateSyncState(claim.id,SyncState.FAILED)
+            Log.e("SYNC_DEBUG", "FAILED: ${result.exceptionOrNull()}")
+            result
+        }
+
     }
 }

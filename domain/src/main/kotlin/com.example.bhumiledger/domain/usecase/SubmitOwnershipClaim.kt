@@ -7,11 +7,13 @@ import com.example.bhumiledger.domain.model.SyncState
 import com.example.bhumiledger.domain.repository.ClaimRepository
 import com.example.bhumiledger.domain.repository.RegistryRepository
 import com.example.bhumiledger.domain.result.DomainResult
+import utils.sha256
+import java.io.File
 import java.util.UUID
 
 class SubmitOwnershipClaim(
     private val claimRepository: ClaimRepository,
-    private val registryRepository: RegistryRepository
+    private val registryRepository: RegistryRepository,
 ) {
 
     suspend operator fun invoke(
@@ -44,12 +46,17 @@ class SubmitOwnershipClaim(
             return DomainResult.Failure(DomainError.AlreadyCurrentOwner)
         }
 
+        val documentHash = documentPath?.let {
+            sha256(File(it))
+        }
+
         val claim = OwnershipClaim(
             id = UUID.randomUUID().toString(),
             parcelId = parcelId,
             claimantId = claimantId,
             status = ClaimStatus.PENDING,
             documentPath = documentPath,
+            documentHash = documentHash,
             syncState = SyncState.PENDING,
             createdAt = System.currentTimeMillis()
         )

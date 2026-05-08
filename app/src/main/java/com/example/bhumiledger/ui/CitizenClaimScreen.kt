@@ -137,6 +137,15 @@ fun CitizenClaimScreen(
                 Text("Submit Claim")
             }
 
+//            Button(
+//                onClick = {
+//                    mainViewModel.testFirestoreDirect()
+//                },
+//                modifier = Modifier.fillMaxWidth()
+//            ) {
+//                Text("Test Firestore Direct")
+//            }
+
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(

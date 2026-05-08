@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "216160737164",
+    "project_id": "bhumiledger",
+    "storage_bucket": "bhumiledger.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:216160737164:android:51fc8491f88945474728a9",
+        "android_client_info": {
+          "package_name": "com.example.bhumiledger"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBnpoW6GI0hwnixUsLXTb3Ph-UlwDUIhGE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

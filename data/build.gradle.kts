@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace = "com.example.bhumiledger.data"
-    compileSdk = 36
+    compileSdk = 34
 
     defaultConfig {
         minSdk = 27
@@ -32,6 +32,9 @@ android {
     }
 
 dependencies {
+    implementation(platform("com.google.firebase:firebase-bom:34.12.0"))
+    implementation("com.google.firebase:firebase-firestore")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.3")
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
@@ -48,10 +51,7 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-
-}
-    }
-dependencies {
     implementation(libs.androidx.work.runtime.ktx)
 }
+    }
 

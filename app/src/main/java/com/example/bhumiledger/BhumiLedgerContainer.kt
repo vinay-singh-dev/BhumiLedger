@@ -23,6 +23,8 @@ import com.example.bhumiledger.domain.usecase.ValidateBlockchainUseCase
 import com.example.bhumiledger.domain.usecase.VerifyOwnershipClaim
 import com.example.bhumiledger.session.SessionManager
 import kotlinx.coroutines.flow.Flow
+import com.example.bhumiledger.data.remote.firestore.FirestoreDataSource
+import com.example.bhumiledger.data.remote.firestore.dto.ClaimDto
 
 class BhumiLedgerContainer(context: Context) {
 
@@ -36,6 +38,8 @@ class BhumiLedgerContainer(context: Context) {
     private val userDao = db.userDao()
 
     // --- Repositories ---
+    private val firestoreDataSource = FirestoreDataSource()
+
     private val blockchainRepository =
         RoomBlockchainRepository(blockDao)
 
@@ -43,9 +47,7 @@ class BhumiLedgerContainer(context: Context) {
         ValidateBlockchainUseCase(blockchainRepository)
 
     private val claimRepository =
-        RoomClaimRepository(claimDao)
-
-
+        RoomClaimRepository(claimDao,firestoreDataSource)
 
     private val registryRepository =
         RoomRegistryRepository(registryDao)
@@ -159,4 +161,7 @@ class BhumiLedgerContainer(context: Context) {
 
     suspend fun getUserById(userId: String) =
         authRepository.getUserById(userId)
+
+//    suspend fun testFirestore(dto: ClaimDto): Result<String> {
+//        return firestoreDataSource.addClaim(dto)
 }

@@ -6,6 +6,7 @@ data class OwnershipClaim(
     val claimantId: String,
     val status: ClaimStatus,
     val documentPath: String? = null,
+    val documentHash: String?,
     val syncState:SyncState,
     val createdAt: Long
 )
