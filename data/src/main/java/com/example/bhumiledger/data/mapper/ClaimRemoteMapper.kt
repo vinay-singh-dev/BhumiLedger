@@ -12,7 +12,7 @@ import kotlin.String
             owner = claimantId,
             land = parcelId,
             status = status.name,
-            documentHash = documentPath, // temp, later real hash
+            documentHash = documentHash, // temp, later real hash
             createdAt = createdAt,
             verifiedBy = null, // fill when verified
             verifiedAt = null
@@ -26,9 +26,10 @@ import kotlin.String
             parcelId = land,
             claimantId = owner,
             status = ClaimStatus.valueOf(status),
-            documentPath = documentHash,
+            documentPath = null,
             syncState = SyncState.SYNCED,
-            createdAt = createdAt
+            createdAt = createdAt,
+            documentHash = documentHash
         )
     }
 
