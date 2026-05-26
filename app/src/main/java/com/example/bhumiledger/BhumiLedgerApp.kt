@@ -18,10 +18,12 @@ class BhumiLedgerApp: Application() {
 
         val db = DatabaseProvider.getDatabase(this)
         val firestore = FirestoreDataSource()
+//        val storage = FirebaseStorageDataSource()
 
         claimRepository = RoomClaimRepository(
             db.claimDao(),
             firestore
+//            storage
 
         )
         syncClaimsUseCase = SyncClaimsUseCase(claimRepository)

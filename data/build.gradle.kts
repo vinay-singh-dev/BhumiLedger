@@ -30,6 +30,7 @@ android {
             jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11
         }
     }
+}
 
 dependencies {
     implementation(platform("com.google.firebase:firebase-bom:34.12.0"))
@@ -53,5 +54,5 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     implementation(libs.androidx.work.runtime.ktx)
 }
-    }
+
 
