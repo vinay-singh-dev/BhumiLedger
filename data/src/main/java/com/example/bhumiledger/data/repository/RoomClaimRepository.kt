@@ -1,6 +1,7 @@
 package com.example.bhumiledger.data.repository
 
 import android.util.Log
+import android.util.Log.e
 import com.example.bhumiledger.data.local.room.ClaimDao
 import com.example.bhumiledger.data.mapper.ClaimMapper
 import com.example.bhumiledger.data.mapper.toDto
@@ -13,7 +14,8 @@ import com.example.bhumiledger.data.remote.firestore.FirestoreDataSource
 
 class RoomClaimRepository(
     private val dao: ClaimDao,
-    private val firestore: FirestoreDataSource
+    private val firestore: FirestoreDataSource,
+//    private val storage: FirebaseStorageDataSource
 ) : ClaimRepository {
 
     private val mapper = ClaimMapper()
@@ -42,7 +44,9 @@ class RoomClaimRepository(
 
         val updated = existing.copy(
             status = claim.status.name,
-            documentPath = claim.documentPath
+            documentPath = claim.documentPath,
+//            documentUrl = claim.documentUrl,
+            documentHash = claim.documentHash
         )
 
         dao.update(updated)
@@ -56,7 +60,7 @@ class RoomClaimRepository(
 
     override fun getClaimsByUser(userId: String): Flow<List<OwnershipClaim>> {
         return dao.getByUserId(userId).map { list ->
-           list.map {mapper.toDomain(it) }
+            list.map { mapper.toDomain(it) }
         }
     }
 
@@ -74,21 +78,67 @@ class RoomClaimRepository(
     }
 
 
+    override suspend fun pushToFirestore(
 
-    override suspend fun pushToFirestore(claim: OwnershipClaim): Result<String> {
+        claim: OwnershipClaim
+    ): Result<String> {
 
-        val dto = claim.toDto()
-        Log.d("SYNC_DEBUG", "Uploading DTO = $dto")
-            val result = firestore.addClaim(dto)
-        return if (result.isSuccess) {
-            Log.d("SYNC_DEBUG", "SUCCESS: ${result.getOrNull()}")
-            dao.updateSyncState(claim.id,SyncState.SYNCED)
-            result
-        } else {
-            dao.updateSyncState(claim.id,SyncState.FAILED)
-            Log.e("SYNC_DEBUG", "FAILED: ${result.exceptionOrNull()}")
-            result
+        return try {
+
+            Log.d(
+                "SYNC_DEBUG",
+                "Starting sync for claimId=${claim.id}"
+            )
+
+            val dto = claim.toDto()
+
+            Log.d(
+                "SYNC_DEBUG",
+                "Uploading claimId=${claim.id} to Firestore"
+            )
+
+            val firestoreResult = firestore.addClaim(dto)
+
+            if (firestoreResult.isSuccess) {
+
+                dao.updateSyncState(
+                    claim.id,
+                    SyncState.SYNCED
+                )
+
+                Log.d(
+                    "SYNC_DEBUG",
+                    "Firestore sync SUCCESS for claimId=${claim.id}"
+                )
+
+            } else {
+
+                dao.updateSyncState(
+                    claim.id,
+                    SyncState.FAILED
+                )
+
+                Log.e(
+                    "SYNC_DEBUG",
+                    "Firestore sync FAILED for claimId=${claim.id}, error=${firestoreResult.exceptionOrNull()}"
+                )
+            }
+
+            firestoreResult
+
+        } catch (e: Exception) {
+
+            dao.updateSyncState(
+                claim.id,
+                SyncState.FAILED
+            )
+
+            Log.e(
+                "SYNC_DEBUG",
+                "Sync EXCEPTION for claimId=${claim.id}, error=$e"
+            )
+
+            Result.failure(e)
         }
-
     }
 }
