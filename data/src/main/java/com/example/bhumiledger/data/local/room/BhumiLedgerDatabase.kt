@@ -12,7 +12,7 @@ import com.example.bhumiledger.data.local.converter.SyncStateConverter
         UserEntity::class,
         BlockEntity::class
     ],
-    version = 7,   // 👈 bump version
+    version = 8,   // 👈 bump version
     exportSchema = false
 )
 

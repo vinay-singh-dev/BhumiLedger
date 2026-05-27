@@ -7,7 +7,7 @@ data class OwnershipClaim(
     val status: ClaimStatus,
     val documentPath: String? = null,
     val documentHash: String?,
-//    val documentUrl: String ? = null,
+    val documentUrl: String ? = null,
     val syncState:SyncState,
     val createdAt: Long
 )

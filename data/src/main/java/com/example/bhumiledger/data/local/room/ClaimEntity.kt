@@ -19,7 +19,7 @@ data class ClaimEntity(
     val createdAt: Long,
 
     val documentPath: String? = null,
-//    val documentUrl: String? = null,
+    val documentUrl: String? = null,
     val documentHash:String?,
 
     val syncState: SyncState

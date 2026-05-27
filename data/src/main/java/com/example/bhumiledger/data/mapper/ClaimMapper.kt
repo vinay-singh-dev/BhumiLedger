@@ -14,7 +14,7 @@ class ClaimMapper {
             status = ClaimStatus.valueOf(entity.status),
             documentHash = entity.documentHash,
             documentPath = entity.documentPath,
-//            documentUrl = entity.documentUrl,
+            documentUrl = entity.documentUrl,
             syncState = entity.syncState,
             createdAt = entity.createdAt
         )
@@ -29,7 +29,7 @@ class ClaimMapper {
             createdAt = domain.createdAt,
             documentHash = domain.documentHash,
             documentPath = domain.documentPath,
-//            documentUrl = domain.documentUrl,
+            documentUrl = domain.documentUrl,
             syncState = domain.syncState
         )
     }

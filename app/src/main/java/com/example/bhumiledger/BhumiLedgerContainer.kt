@@ -25,6 +25,7 @@ import com.example.bhumiledger.session.SessionManager
 import kotlinx.coroutines.flow.Flow
 import com.example.bhumiledger.data.remote.firestore.FirestoreDataSource
 import com.example.bhumiledger.data.remote.firestore.dto.ClaimDto
+import com.example.bhumiledger.data.remote.storage.CloudinaryDataSource
 
 class BhumiLedgerContainer(context: Context) {
 
@@ -39,7 +40,7 @@ class BhumiLedgerContainer(context: Context) {
 
     // --- Repositories ---
     private val firestoreDataSource = FirestoreDataSource()
-//    private val storageDataSource = FirebaseStorageDataSource()
+    private val cloudinaryDataSource = CloudinaryDataSource()
 
     private val blockchainRepository =
         RoomBlockchainRepository(blockDao)
@@ -48,7 +49,7 @@ class BhumiLedgerContainer(context: Context) {
         ValidateBlockchainUseCase(blockchainRepository)
 
     private val claimRepository =
-        RoomClaimRepository(claimDao,firestoreDataSource)
+        RoomClaimRepository(claimDao,firestoreDataSource,cloudinaryDataSource)
 
     private val registryRepository =
         RoomRegistryRepository(registryDao)
