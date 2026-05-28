@@ -87,15 +87,12 @@ android {
 
 dependencies {
 
-    implementation(
-        platform(
-            "com.google.firebase:firebase-bom:34.12.0"
-        )
-    )
-
+    implementation(platform("com.google.firebase:firebase-bom:34.12.0"))
+    implementation("com.google.firebase:firebase-auth")
     implementation(
         "com.google.firebase:firebase-firestore"
     )
+
 
     implementation(
         "com.cloudinary:cloudinary-android:3.0.2"

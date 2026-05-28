@@ -8,7 +8,7 @@ interface AuthRepository {
 
     suspend fun loginUser(
         email: String,
-        passwordHash: String
+        password :String
     ): User?
 
     suspend fun getUserById(id: String): User?
