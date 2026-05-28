@@ -56,7 +56,7 @@ dependencies {
 //        implementation("com.google.firebase:firebase-firestore-ktx:25.1.1")
 
         implementation(platform(libs.androidx.compose.bom))
-
+    implementation("com.cloudinary:cloudinary-android:3.0.2")
         implementation(libs.androidx.core.ktx)
         implementation(libs.androidx.lifecycle.runtime.ktx)
         implementation(libs.androidx.activity.compose)

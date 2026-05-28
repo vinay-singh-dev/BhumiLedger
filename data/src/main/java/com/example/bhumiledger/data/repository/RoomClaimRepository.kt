@@ -11,11 +11,12 @@ import com.example.bhumiledger.domain.repository.ClaimRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import com.example.bhumiledger.data.remote.firestore.FirestoreDataSource
+import com.example.bhumiledger.data.remote.storage.CloudinaryDataSource
 
 class RoomClaimRepository(
     private val dao: ClaimDao,
     private val firestore: FirestoreDataSource,
-//    private val storage: FirebaseStorageDataSource
+    private val storage: CloudinaryDataSource
 ) : ClaimRepository {
 
     private val mapper = ClaimMapper()
@@ -45,7 +46,7 @@ class RoomClaimRepository(
         val updated = existing.copy(
             status = claim.status.name,
             documentPath = claim.documentPath,
-//            documentUrl = claim.documentUrl,
+            documentUrl = claim.documentUrl,
             documentHash = claim.documentHash
         )
 
@@ -90,16 +91,67 @@ class RoomClaimRepository(
                 "Starting sync for claimId=${claim.id}"
             )
 
-            val dto = claim.toDto()
+//            val dto = claim.toDto()
+                var updatedClaim = claim
 
-            Log.d(
-                "SYNC_DEBUG",
-                "Uploading claimId=${claim.id} to Firestore"
+            // step 1 upload PDF if needed
+            val documentPath = claim.documentPath
+
+            if (documentPath != null && claim.documentUrl == null) {
+                Log.d(
+                    "SYNC_DEBUG",
+                    "uploading pdf for claimId=${claim.id}")
+
+                val uploadResult = storage.uploadPdf(
+                    claim.id,
+                    documentPath
+                )
+
+                if (uploadResult.isFailure) {
+                dao.updateSyncState(
+                    claim.id,
+                    SyncState.FAILED
+
+                )
+                    Log.d("SYNC_DEBUG",
+                        "PDF upload failed for claimId = ${claim.id} , error = ${uploadResult.exceptionOrNull()})"
+                    )
+                    return Result.failure(
+                        uploadResult.exceptionOrNull()
+                            ?: Exception("cloudinary upload failed")
+                    )
+
+            }
+                val cloudUrl = uploadResult.getOrNull()
+
+                Log.d("SYNC DEBUG",
+                        "PDF upload success for claimId = ${claim.id} , url = $cloudUrl")
+
+            // Step 2 save cloud url locally
+            updatedClaim = claim.copy(
+                documentUrl = cloudUrl
             )
+                dao.update(
+                mapper.toEntity(updatedClaim)
+                )
+
+                Log.d(
+                    "SYNC_DEBUG",
+                    "Local Room updated with documentUrl for claimId=${claim.id}"
+                )
+
+            }
+
+            // step 3 push metadata to firestore
+
+            val dto = updatedClaim.toDto()
+
+            Log.d("SYNC_DEBUG",
+                "Uploading Firestore DTO for claimId =${claim.id}")
 
             val firestoreResult = firestore.addClaim(dto)
 
-            if (firestoreResult.isSuccess) {
+            if(firestoreResult.isSuccess) {
 
                 dao.updateSyncState(
                     claim.id,
@@ -108,37 +160,35 @@ class RoomClaimRepository(
 
                 Log.d(
                     "SYNC_DEBUG",
-                    "Firestore sync SUCCESS for claimId=${claim.id}"
+                    "Firestore sync SUCCESS for claimId = ${claim.id}"
                 )
 
             } else {
-
                 dao.updateSyncState(
                     claim.id,
                     SyncState.FAILED
                 )
 
-                Log.e(
-                    "SYNC_DEBUG",
-                    "Firestore sync FAILED for claimId=${claim.id}, error=${firestoreResult.exceptionOrNull()}"
-                )
+                Log.e("SYNC_DEBUG",
+                    "FireStore Sync failed for claimId = ${claim.id}, error = ${firestoreResult.exceptionOrNull()}")
+
             }
 
             firestoreResult
 
-        } catch (e: Exception) {
-
-            dao.updateSyncState(
+        } catch (e:Exception) {
+            dao.updateSyncState (
                 claim.id,
                 SyncState.FAILED
             )
 
             Log.e(
                 "SYNC_DEBUG",
-                "Sync EXCEPTION for claimId=${claim.id}, error=$e"
+                "Sync EXCEPTION for claimId = ${claim.id}, error = $e"
             )
-
             Result.failure(e)
-        }
-    }
+
+            }
+
+            }
 }

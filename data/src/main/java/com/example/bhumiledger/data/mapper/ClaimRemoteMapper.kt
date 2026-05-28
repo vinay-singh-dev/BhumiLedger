@@ -13,7 +13,7 @@ import kotlin.String
             land = parcelId,
             status = status.name,
             documentHash = documentHash, // temp, later real hash
-//            documentUrl = documentUrl,
+            documentUrl = documentUrl,
             createdAt = createdAt,
             verifiedBy = null, // fill when verified
             verifiedAt = null
@@ -31,7 +31,7 @@ import kotlin.String
             syncState = SyncState.SYNCED,
             createdAt = createdAt,
             documentHash = documentHash,
-//            documentUrl = documentUrl
+            documentUrl = documentUrl
         )
     }
 
