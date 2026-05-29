@@ -1,25 +1,39 @@
 package com.example.bhumiledger.data.remote.auth
-import com.example.bhumiledger.domain.model.User
-import com.example.bhumiledger.domain.repository.AuthRepository
 import com.google.firebase.auth.FirebaseAuth
-class FirebaseAuthDataSource (
-    privat val firebaseAuth :FirebaseAuth
-):AuthRepository
-    override suspend fun registerUser(user: User) {
-        TODO("Not yet implemented")
-    }
+import com.google.firebase.auth.FirebaseUser
+import kotlinx.coroutines.tasks.await
 
-    override suspend fun loginUser(
+class FirebaseAuthDataSource (
+    private val firebaseAuth :FirebaseAuth
+) {
+    suspend fun registerUser(
         email: String,
         password: String
-    ): User? {
-        TODO("Not yet implemented")
+    ): FirebaseUser? {
+
+        val authResult = firebaseAuth
+            .createUserWithEmailAndPassword(email,password)
+            .await()
+        return authResult.user
     }
 
-    override suspend fun getUserById(id: String): User? {
-        TODO("Not yet implemented")
+    suspend fun loginUser(
+        email: String,
+        password: String
+    ): FirebaseUser? {
+        val signInResult = firebaseAuth
+            .signInWithEmailAndPassword(email,password)
+            .await()
+        return signInResult.user
     }
 
-    override suspend fun getUserByEmail(email: String): User? {
-        TODO("Not yet implemented")
+    fun logout(): Unit {
+        firebaseAuth.
+                signOut()
     }
+
+     fun getCurrentUser(): FirebaseUser? {
+       return  firebaseAuth.currentUser
+    }
+}
+
