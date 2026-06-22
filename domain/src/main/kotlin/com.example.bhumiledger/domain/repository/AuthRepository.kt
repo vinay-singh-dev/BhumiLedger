@@ -9,8 +9,8 @@ interface AuthRepository {
     suspend fun registerUser(
         name: String,
         email: String,
-        password :String,
-        role: UserRole) : DomainResult<User>
+        password: String,
+        ) : DomainResult<User>
 
     suspend fun loginUser(
         email: String,

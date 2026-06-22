@@ -31,7 +31,7 @@ class RegisterUserUseCase(
             id = UUID.randomUUID().toString(),
             name = name,
             email = email,
-            passwordHash = passwordHash,
+            employeeId = employeeId,
             role = role
         )
 

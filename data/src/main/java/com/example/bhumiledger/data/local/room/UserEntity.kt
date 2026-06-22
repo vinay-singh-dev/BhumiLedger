@@ -12,7 +12,7 @@ data class UserEntity(
     val id:String,
     val name:String,
     val email:String,
-    val passwordHash:String,
+    val employeeId:String?,
     val role: UserRole
 
 )
